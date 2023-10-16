@@ -1,0 +1,460 @@
+﻿<Window x:Class="SoldCalc.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
+        mc:Ignorable="d"   
+        xmlns:local="clr-namespace:SoldCalc"         
+        WindowStartupLocation="CenterOwner"  WindowState="Maximized"   WindowStyle="SingleBorderWindow"     
+        MinWidth="1000" MinHeight="660" 
+             
+        Loaded="Window_Loaded"   ManipulationStarting="Window_ManipulationStarting"  ManipulationDelta="Window_ManipulationDelta" ManipulationInertiaStarting="Window_InertiaStarting" Unloaded="Window_Unloaded" SizeChanged="Window_SizeChanged" 
+                  
+        Title="SoldCalc 2307.30" 
+        Width="{x:Static SystemParameters.MinimumWindowWidth}" Height="{x:Static SystemParameters.MinimizedWindowHeight}" StateChanged="Window_StateChanged"   >
+    <!--d:DataContext="{d:DesignInstance Type=local:UPR_Ranga}"-->
+    <!--   Width="1000" Height="900"-->
+    <Window.Resources>
+        <ResourceDictionary>
+            <ScaleTransform x:Key="Window_Scale_Transform" ScaleX="{Binding ElementName=slider, Path=Value}"  ScaleY="{Binding ElementName=slider, Path=Value}" />
+        </ResourceDictionary>
+    </Window.Resources>
+    <!--Dodaj obiekt WindowChrome-->
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="34" />
+    </WindowChrome.WindowChrome>
+
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static SystemCommands.CloseWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Close" />
+        <CommandBinding Command="{x:Static SystemCommands.MaximizeWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Maximize" />
+        <CommandBinding Command="{x:Static SystemCommands.MinimizeWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Minimize" />
+        <CommandBinding Command="{x:Static SystemCommands.RestoreWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Restore" />
+    </Window.CommandBindings>
+    <!-- LayoutTransform="{StaticResource windowScalePanel}"-->
+    <Border x:Name="MainWindowBorder" BorderBrush="Black" Margin="6,6,6,6" BorderThickness="0" LayoutTransform="{StaticResource Window_Scale_Transform}" >
+        <Grid x:Name="parentContainer"  >
+            <Grid.RowDefinitions>
+                <RowDefinition Height ="Auto"/>
+                <RowDefinition Height ="*"/>
+            </Grid.RowDefinitions>
+            <!--Okno Nawigacji -->
+            <Grid Grid.Row="0" Height="28" Background="#E3F2FD" Margin="3,0,0,0" Opacity="1" >
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Stretch" >
+                    <Image Source="/images/SCiko.ico" Width="25" Height="25" Margin="12,2,2,2"/>
+                    <TextBlock Text="{Binding Title,RelativeSource={RelativeSource FindAncestor,AncestorType=Window}}" FontFamily="Calibri" Margin="9,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="14" FontWeight="Light" Foreground="Black" />
+
+                    <StackPanel Orientation="Horizontal" x:Name="St_TestScale" Style="{StaticResource StAdmin}"  x:FieldModifier="public" HorizontalAlignment="Left" >
+                        <Slider   x:Name="slider" Minimum="0.6" Maximum="1.2" Width="200" WindowChrome.IsHitTestVisibleInChrome="True"
+                                HorizontalAlignment="Center" Value="1" VerticalAlignment="Center" Margin="100,4,0,0"/>
+                        <TextBox  x:Name="TestScale" WindowChrome.IsHitTestVisibleInChrome="True" x:FieldModifier="public" Width="50" Height="30" BorderBrush="{x:Null}"
+                                    Text="{Binding Scale, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Background="{x:Null}"  VerticalContentAlignment="Center"  />
+                    </StackPanel>
+                </StackPanel>
+
+                <!--Caption buttons -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,7,0"  >
+                    <StackPanel x:Name="ViewUserName"  VerticalAlignment="Center" Margin="0,0,20,0" >
+                        <Image x:Name="User_ph" WindowChrome.IsHitTestVisibleInChrome="True" MouseDown="User_ph_MouseDown" MouseEnter="User_ph_MouseEnter"   x:FieldModifier="public"  Source="/images/png_User.png" 
+                               Width="20" Height="20" Style="{StaticResource Image_Style}" Opacity="0.3"  />
+                    </StackPanel>
+                    <Button Style="{StaticResource MinimizeButtonStyle}" WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Minimalizuj"
+                            Command="{x:Static SystemCommands.MinimizeWindowCommand}"/>
+                    <Button x:Name="RestoreButton" Visibility="Visible" Style="{StaticResource RestoreButtonStyle}" 
+                            Command="{x:Static SystemCommands.RestoreWindowCommand}" WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Przywróc w dół"/>
+                    <Button x:Name="MaximizeButton" Visibility="Collapsed" Style="{StaticResource MaximizeButtonStyle}" 
+                            Command="{x:Static SystemCommands.MaximizeWindowCommand}" WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Maksymalizuj" />
+                    <Button Style="{StaticResource CloseButtonStyle}" WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Zamknij"
+                            Command="{x:Static SystemCommands.CloseWindowCommand}"/>
+                </StackPanel>
+            </Grid>
+
+            <!--Okno Zdarzeń -->
+            <Grid Grid.Row="1" x:Name="GridPan" Margin="0,0,0,0" Style="{StaticResource BacgrundGrid}" >
+                <StackPanel   x:Name="StScale"  Margin="40,5,10,5" Orientation="Horizontal"  MaxHeight="60" VerticalAlignment="Top" Style="{StaticResource BacgrundStack}">
+                    <DockPanel  x:Name="PaneLnaw"  x:FieldModifier="public"   VerticalAlignment="Center"   >
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="5,0,50,0">
+                            <Label>
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="Wyślij OFR" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="10"/>
+                                    <Image Source="/images/SendPDF.png" Width="40" Height="40" x:Name="PmessagePdf" MouseDown="PmessagePdf_MouseDown" ToolTip="Wyśij ofertę" x:FieldModifier="public" Style="{StaticResource Image_Style}"  />
+                                </StackPanel>
+                            </Label>
+                            <Label Margin="30,0,0,0" x:Name="StZK">
+                                <StackPanel Orientation="Vertical" >
+                                    <TextBlock Text="Wyślij ZK11" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="10"/>
+                                    <Image x:Name="PiZK11" MouseDown="PiZK11_MouseDown"  Source="/images/wyslijZK.png" Width="40" Height="40" ToolTip="Wyślij ZK11" x:FieldModifier="public" Style="{StaticResource Image_Style}" />
+                                </StackPanel>
+                            </Label>
+                            <Image x:Name="PDFShow" x:FieldModifier="public" Source="/images/PDF.png" Margin="15,5,5,5" Width="30" Height="30" VerticalAlignment="Top" Visibility="Collapsed"/>
+                            <Image x:Name="PZK11" x:FieldModifier="public" Source="/images/ZAtwierdz.png" Margin="15,5,5,5" Width="30" Height="30" VerticalAlignment="Top" Visibility="Collapsed"/>
+                            <Image Visibility="Collapsed" x:Name="WyswietlZapisOFR" Source="/images/Chec.png"   x:FieldModifier="public" Margin="15,5,5,5" Width="30" Height="30" VerticalAlignment="Top" />
+
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Label >
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="Czyść wybrane" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="10"/>
+                                    <Image x:Name="Czysc" ToolTip="Usuń wybrane produkty" x:FieldModifier="public" MouseDown="MWCzysc_MouseDown" Source="/images/Usun.png" Width="35" Height="35" Style="{StaticResource Image_Style}" />
+                                </StackPanel>
+                            </Label>
+
+                            <Label Margin="30,0,0,0">
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="Zapisz robocza" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="10"/>
+                                    <Image  x:Name="SaweOfr" ToolTip="Zapisz wybrane produkty" MouseDown="SaweOfr_MouseDown"  x:FieldModifier="public" Source="/images/Save.png" Width="40" Height="40"  Style="{StaticResource Image_Style}" />
+                                </StackPanel>
+                            </Label>
+                            <Label Margin="30,0,0,0">
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="Wyświetl Ofertę" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="10"/>
+                                    <Image  x:Name="WyswietlOfr" MouseDown="WyswietlOfr_MouseDown"  ToolTip="Wyświetl ofertę" x:FieldModifier="public" Source="/images/ZapiszPDF.png" Width="40" Height="40"  Style="{StaticResource Image_Style}" />
+                                </StackPanel>
+                            </Label>
+
+                        </StackPanel>
+
+                    </DockPanel>
+                    <Label x:Name="RoboczeSql"  Margin="10,0,0,0">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Odczyt Robocze" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="10"/>
+                            <Image  x:Name="WyswietlRobocze" MouseDown="WyswietlRobocze_MouseDown"  ToolTip="Wstaw zapisane" x:FieldModifier="public" Source="/images/checklist.png" Width="40" Height="40"  Style="{StaticResource Image_Style}" />
+                        </StackPanel>
+                    </Label>
+                </StackPanel>
+
+                <StackPanel  Orientation="Vertical" MaxWidth="40" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <StackPanel Grid.Row="0" Grid.Column="0" Margin="5,5,0,5" Orientation="Vertical" VerticalAlignment="Top" Height="40">
+                        <Button  Name="btn5" ToolTip="Wróć"  Width="35" Height="35"  Command="NavigationCommands.BrowseBack" CommandTarget="{Binding ElementName=Main}" BorderBrush="White" Foreground="{x:Null}">
+                            <Image Source="/images/Wsteecz.png" HorizontalAlignment="Left" VerticalAlignment="Center"  ToolTip="Wróć"></Image>
+                        </Button>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="0,0"  x:FieldModifier="public"  x:Name="Panel1">
+                        <Image x:Name="Klientshow"  MouseDown="Client_MouseDown"         Style="{StaticResource Image_Style}" ToolTip="Tablica - wybór klienta"  x:FieldModifier="public" Source="/images/Factory.png" Margin="5" Width="30" Height="30" VerticalAlignment="Top"/>
+                        <Image x:Name="AddKlient"   MouseDown="AddClient_MouseDown"     Style="{StaticResource Image_Style}" ToolTip="Tablica - wprowadz nowego klienta"  x:FieldModifier="public" Source="/images/AddNew.png"  Margin="5" Width="30" Height="30" VerticalAlignment="Top" />
+                        <Image x:Name="PodgladHist" MouseDown="PodgladHist_MouseDown"   Style="{StaticResource Image_Style}" ToolTip="Otwórz - pełna historia zakupów"  x:FieldModifier="public" Source="/images/calc.png" Margin="5" Width="30" Height="30" VerticalAlignment="Top" />
+                        <Image x:Name="WyslijEmail" MouseDown="WyslijEmail_MouseDown"   Style="{StaticResource Image_Style}" ToolTip="wyodrębnij adresy e_mail" x:FieldModifier="public" Source="/images/WyślijEmail.png" Margin="5,5,5,5" Width="30" Height="30" VerticalAlignment="Top" />
+                        <Image x:Name="ShowCennik"  MouseDown="ShowCennik_MouseDown"    Style="{StaticResource Image_Style}" ToolTip="Wyświetl cennik" x:FieldModifier="public"  Source="/images/Procent.png" Margin="5,5,5,5" Width="30" Height="30" VerticalAlignment="Top" />
+                        <Image x:Name="ShowOFR"     MouseDown="ShowOFR_MouseDown"       Style="{StaticResource Image_Style}" ToolTip="Wyświetl OFR" x:FieldModifier="public"  Source="/images/PDF.png" Margin="5,5,5,5" Width="30" Height="30" VerticalAlignment="Top" />
+                    </StackPanel>
+                    <StackPanel x:Name="AdminPanel" Grid.Row="2" Grid.Column="0" Margin="0,10,0,0" Orientation="Vertical" VerticalAlignment="Top" Style="{StaticResource StAdmin}">
+                        <Image x:Name="Menu"        MouseDown="Menu_MouseDown" ToolTip="Otwiera i wyświetla bazę użytkowników" Style="{StaticResource Image_Style}" Source="/images/rejonizacja.png" Margin="5,0,0,0" Width="30" Height="25" VerticalAlignment="Bottom" HorizontalAlignment="Left"  />
+                        <Label x:Name="AktualPH"    MouseDown="Aktual_Baza_PH_MouseDown" ToolTip="Opens and displays database for changing/updating data of all FTP clients" Margin="0,10,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  >
+                            <Label.Content>
+                                <AccessText  TextWrapping="Wrap"  Text="Page - Change Customer Database" FontSize="6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Label.Content>
+                        </Label>
+                        <Label x:Name="AktBazaCennik"  MouseDown="Aktual_Baza_PH_MouseDown"  ToolTip="Opens and displays the database for changing/updating the Price List from the FTP database" Margin="0,10,0,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" >
+                            <Label.Content>
+                                <AccessText TextWrapping="Wrap" Text="Page - Change price list" FontSize="7" />
+                            </Label.Content>
+                        </Label>
+                        <Label x:Name="AktCen"  MouseDown="Aktual_Baza_PH_MouseDown" ToolTip="Price list update from Excel file!" >
+                            <Label.Content>
+                                <AccessText TextWrapping="Wrap" Text="Update DataBase from EXCEL !" FontSize="7"/>
+                            </Label.Content>
+                        </Label>
+                        <Label x:Name="AktZakup" MouseDown="Aktual_Baza_PH_MouseDown"  ToolTip="Updating the Shopping Database from an Excel file" Margin="0,10,0,0" >
+                            <Label.Content>
+                                <AccessText x:Name="AktZakup1" TextWrapping="Wrap" Text="Update Shopping from Excel !" FontSize="7" />
+                            </Label.Content>
+                        </Label>
+                        <Label x:Name="Add_Klient_To_Exel" MouseDown="Aktual_Baza_PH_MouseDown" ToolTip="Updating the Customer Database from an Excel file" Margin="0,10,0,0" >
+                            <Label.Content>
+                                <AccessText TextWrapping="Wrap" Text="Update Client database from EXCEL !" FontSize="7"/>
+                            </Label.Content>
+                        </Label>
+                        <Label x:Name="Addwindows1" MouseDown="Addwindows1_MouseDown" Margin="0,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" >
+                            <Label.Content>
+                                <AccessText TextWrapping="Wrap" Text="Wczytaj Bazę" FontSize="7"/>
+                            </Label.Content>
+                        </Label>
+                    </StackPanel>
+
+                </StackPanel>
+
+                <!-- Okno Dodaj nowe Page -->
+                <Frame x:Name="Main" x:FieldModifier="public"   Margin="40,60,0,0"  Grid.Row="2" Grid.Column="1"   NavigationUIVisibility="Hidden"  DataContext="MyPageInformation" VerticalAlignment="Top" />
+
+                <!-- Okno Dodaj nowe Page -->
+
+                <!-- Panel Aktualizacji -->
+                <StackPanel x:Name="StAktual" Orientation="Horizontal" Width=" 300" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0,-2,0,0" Style="{StaticResource BacgrundStack}">
+                    <StackPanel VerticalAlignment="Bottom">
+                        <Label x:Name="UpdateMe"  MouseDown="Update_App_MouseDown"  Width="40"  Height="40" x:FieldModifier="public"  ToolTip="Dostępna aktualizacja" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0"  >
+                            <Image x:Name="Dow"  Source="/images/Dow.png" Opacity="0.6" x:FieldModifier="public" Style="{StaticResource Image_Style}"   />
+                        </Label>
+                        <StackPanel x:Name="WyswietlProcent"  x:FieldModifier="public" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Bottom">
+                            <Label x:Name="Labkryj" MouseDown="Labkryj_MouseDown"  Content=">" FontSize="36"  HorizontalAlignment="Center" VerticalAlignment="Stretch" Opacity="0.4" FontWeight="Bold" HorizontalContentAlignment="Right" />
+                            <Image gif:ImageBehavior.AnimatedSource="/images/loading.gif" Opacity="0.6"   Width="30" Height="30" HorizontalAlignment="Center" Margin="0,10,0,0" />
+                            <Label x:Name="lblTim" x:FieldModifier="public" FontSize="6" HorizontalContentAlignment="Center" Margin="0,-23,0,0" >100%</Label>
+                            <Label x:Name="LabIle" x:FieldModifier="public" FontSize="8" HorizontalContentAlignment="Center" Margin="0,-7,0,0" >100%</Label>
+                        </StackPanel>
+                        <Image x:Name="Aktualizuj" MouseDown="Aktualizuj_MouseDown"  ToolTip="Aktualizuj bazę" Opacity="0.6"  Source="/images/Refresh.png"  Width="30" Height="25"  VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="7,10,0,10" />
+                        <StackPanel x:Name="Wlan" Width="25" Height="25" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="7,10,0,20">
+                            <Image x:Name="Conect"  Source="/images/conectwifi.png" Opacity="0.6"  Width="25"  VerticalAlignment="Bottom" HorizontalAlignment="Center"  />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Margin="25,0,10,-2">
+                        <Label x:Name="LabNazawaAktual"         x:FieldModifier="public"  Content=""    Width="200" Height="30" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" FontSize="14" Margin="0,30,10,0" />
+                        <ProgressBar x:Name="AktualBazaProgres" x:FieldModifier="public"                Width="200" Height="20" Margin="5,10,10,0" BorderBrush="#FFFFFEFE" Background="White" />
+                        <Label x:Name="LabProgres"              x:FieldModifier="public"  Content=""    Width="200" Height="30" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" FontSize="14" HorizontalAlignment="Stretch" Margin="0,-25,10,0" />
+                        <Label x:Name="LabNazawaDzialanie"      x:FieldModifier="public"  Content=""    Width="200" Height="30" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" FontSize="14" Margin="0,10,10,0" />
+                        <Label x:Name="LabInfoSend"             x:FieldModifier="public"  Content=""    Width="200" Height="30" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" FontSize="11" Margin="0,10,10,0" />
+                        <ProgressBar x:Name="SendtBazaProgres"  x:FieldModifier="public"                Width="200" Height="20" Margin="5,10,10,0" BorderBrush="#FFFFFEFE" Background="White" Foreground="#FFFF1700" Opacity="0.6" />
+                        <!--Foreground="#FFFF1700" Opacity="0.6" />-->
+                        <Label x:Name="SendtLabProgres"         x:FieldModifier="public"  Content=""   Width="200" Height="30" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" FontSize="14" HorizontalAlignment="Stretch" Margin="0,-25,10,0" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Panel Czekaj ładuję dane -->
+                <DockPanel x:Name="Dock_Aktual_Progres"  Visibility="Collapsed" x:FieldModifier="public" HorizontalAlignment="Stretch" Height="Auto" Width="Auto"  VerticalAlignment="Stretch" Background="White" >
+                    <StackPanel >
+                        <Label   x:Name="PageCleardock" MouseDown="PageClear_MouseDown"  x:FieldModifier="public"  Width="60" Height="60" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,15,15,0" >
+                            <Image Source="/images/Clear.png" Width="15" Height="15"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="17,17,0,0"  />
+                        </Label>
+                        <StackPanel x:Name="Image_wait"  x:FieldModifier="public" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  >
+                            <Image gif:ImageBehavior.AnimatedSource="/images/loading.gif" Width="90" x:Name="WaitImage" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,100,0,0"/>
+                            <Label  x:FieldModifier="public"  x:Name="Info_Gif_Czekaj" Content=" Czekaj - Image wait" VerticalContentAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel x:Name="Infokryj"  x:FieldModifier="public" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Center" >
+                            <ProgressBar  x:FieldModifier="public"  x:Name="Progres" Height="30" Width="100" Background="Transparent" BorderBrush="Transparent"/>
+                            <Label  x:FieldModifier="public" x:Name="LblProgres" Content= "" Width="100" Height="30"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
+                        </StackPanel>
+                    </StackPanel>
+                </DockPanel>
+
+
+
+                <!-- Panel Pierwsze uruchomienie -->
+                <DockPanel x:Name="Panel_Pierwsze_Logowanie" Visibility="Collapsed"  LastChildFill="True" Background="#FF0083DF" Margin="10,28,732,353" Grid.ColumnSpan="2" Grid.RowSpan="3"  />
+
+
+                <!-- Panel Uruchom aktualizacje  -->
+                <DockPanel x:Name="UruchomAktual" Visibility="Collapsed"  Width="800" Height="350" >
+                    <DockPanel  Width="350" MinHeight="300"  Background="White">
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Width="400">
+                            <Label Content="Zaznacz Dane do aktualizacji" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="#FF0303" Opacity="0.6" FontSize="16"/>
+                            <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center" >
+                                <CheckBox Content="Aktualizuj Bazę - Klienci, Cennik, Zakupy" IsChecked="True" Margin="0,20,0,0" Click="CheckBox_Click" FontSize="16"/>
+                                <CheckBox x:Name="AktImg" Content="Aktualizuj zdjęcia" Click="CheckBox_Click" IsChecked="False" Margin="0,20,0,0" FontSize="16"/>
+                                <CheckBox x:Name="AktTDS" Content="Aktualizuj karty techniczne" Click="CheckBox_Click" IsChecked="False" Margin="0,20,0,0" FontSize="16"/>
+                                <Label MouseDown="Aktualizuj_Baza_MouseDown"  Content="Zatwierdz" Style="{StaticResource label_Scale_Style}" Width="240" Background="#BF0707" Opacity="0.6" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="30,30,30,0" FontSize="16" />
+                                <Label MouseDown="Cancel_Aktuaalizuj_baza_MouseDown" Content="Anuluj"  Style="{StaticResource label_Scale_Style}" Width="240" Background="#868686" Opacity="0.6" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="30,5,30,20" FontSize="16" />
+                            </StackPanel>
+                        </StackPanel>
+                    </DockPanel>
+                </DockPanel>
+                <!-- Panel ładuję dane 2 -->
+                <DockPanel x:Name="VievPage" Visibility="Collapsed"  x:FieldModifier="public"  HorizontalAlignment="Center" Height="Auto" Width="Auto"  Grid.Row="2" VerticalAlignment="Center" Background="White" Margin="0,0,60,0"  >
+                    <Label Content ="" HorizontalAlignment="Right"/>
+                    <Label  Width="60" Height="60" x:Name="PageClear"  x:FieldModifier="public" MouseDown="PageClear_MouseDown" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,0,0" >
+                        <Image Source="/images/Clear.png" Width="15" Height="15"  HorizontalAlignment="Right" VerticalAlignment="Top" Margin="18,18,0,0"  />
+                    </Label>
+                    <StackPanel x:Name="StackPanel_Info_Image" Visibility="Visible" x:FieldModifier="public" Margin="0,0,0,0" >
+                        <Label x:Name="InfoLab" Content ="" VerticalContentAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+                    </StackPanel>
+                </DockPanel>
+
+                <StackPanel x:Name="StPH" x:FieldModifier="public" MouseLeave="User_ph_MouseLeave"
+                           Visibility="Collapsed"  Style="{StaticResource StackPanel_Visible}"  Background="White" MinWidth="300"  Width="Auto" MinHeight="150" Height="Auto" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="5,-5,150,0">
+                    <StackPanel.Resources>
+                        <ResourceDictionary>
+                            
+                            <BooleanToVisibilityConverter x:Key="Boolen_To_Visiblity"/>
+                        </ResourceDictionary>
+                    </StackPanel.Resources>
+                    <!--d:DataContext="{d:DesignInstance Type=local:MainWindow}"-->
+                    <DockPanel  Margin="0,0,0,0">
+                        <Label x:Name="Rmany" Content="1"/>
+                        <Label Content="Reflash" MouseDown="Reflash_MouseDown"/>
+                        <Label x:Name="L_Rej"  Content="{Binding Rejon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Style="{StaticResource LaBFont}" FontWeight="Bold" />
+                        <StackPanel Style="{StaticResource StPH_KO}" HorizontalAlignment="Right" Margin="0,0,0,0">
+                            <Image x:Name="DowCen" MouseDown="DowCen_MouseDown"  Source="/images/Excel.png" Width="30" Height="30"  ToolTip="Zapisz cennik do Excel" HorizontalAlignment="Center" Margin="0,5,20,0"  Style="{StaticResource Image_Style}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </DockPanel>
+                    <StackPanel Orientation="Horizontal" >
+                        <Label x:Name="L_UPR_Ranga"  Content="{Binding Ranga, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Style="{StaticResource LaBFont}" />
+                        <Label x:Name="L_NamePH"  Content="{Binding User_PH, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Style="{StaticResource LaBFont}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" >
+                        <Label Content="email : "  FontSize="14" FontFamily="Bookman Old Style" Style="{StaticResource LaBFont}" />
+                        <Label x:Name="L_User_Email" Content="{Binding User_Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Style="{StaticResource LaBFont}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" >
+                        <Label Content="tel : "  Style="{StaticResource LaBFont}" />
+                        <Label x:Name="L_Telefon"  Content="{Binding Telefon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Style="{StaticResource LaBFont}"  />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Style="{StaticResource StAdmin}"  >
+                        <Label Content="Skala obrazu"   Style="{StaticResource LaBFont}"  VerticalContentAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50,0,0,0" >
+                            <Label x:Name="ScalaMinus" MouseDown="Label_Minus" Visibility="Visible" Width="40" Height="40" Content="-"  Style="{StaticResource CaptionLabel}"  />
+                            <Label Content="{Binding ElementName=slider, Path=Value}"  Width="50" Style="{StaticResource CaptionLabel}" FontSize="18" />
+                            <Label x:Name="scalaPlus" MouseDown="Label_Plus" Visibility="Visible" Width="40" Height="40" Content="+" Style="{StaticResource CaptionLabel}"  />
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Style="{StaticResource StAdmin}" >
+                        <ToggleButton x:Name="WyswietlCen" Width="250" Content="Wyświetl Cennik pomocniczy"  IsChecked="{Binding WyswCennikAdmin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ToggleButtonStyle1}" Checked="WyswietlCen_Checked" Unloaded="WyswietlCen_Unloaded"/>
+                        <Label Content="{Binding ElementName=WyswietlCen, Path=IsChecked}"/>
+                        <Label x:Name="Lab_Checked" Content="{Binding WyswCennikAdmin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                       
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox x:Name="SendBaza" IsChecked="{Binding SendDB, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Content="wysyłaj bazę z aktualizacji" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Label Content="{Binding ElementName=SendBaza, Path=IsChecked}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Style="{StaticResource StAdmin}"  >
+                        <ToggleButton x:Name="VievSeiting" Width="250"  Content="Viev Seiting Admin" IsChecked="false" Style="{StaticResource ToggleButtonStyle1}"/>
+                    </StackPanel>
+                    <!--<Button x:Name="ConsoleOpen" Content="Open Console" Click="ConsoleOpen_Click"/>-->
+                    <StackPanel Orientation="Vertical" Visibility="{Binding IsChecked, ElementName=VievSeiting, Converter={StaticResource Boolen_To_Visiblity},Mode=TwoWay}" >
+                       
+                        <StackPanel Orientation="Horizontal">
+                            <Label x:Name="Ide" Content="Ide" Width="200"/>
+                            <Label Content="{Binding Ide,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="User_PH" Width="{Binding ElementName=Ide, Path=ActualWidth }"/>
+                        <Label Content="{Binding User_PH,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Id" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding Id,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Ranga" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding Ranga, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>                
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Rejon" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding Rejon,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Imie" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding Imie , Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Nazwisko" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding Nazwisko,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Admin" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding Admin , Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Telefon" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding Telefon,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="UprKO" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding UprKO,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="User_Email" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding User_Email,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="KO_email" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding KO_email,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="CenaKO" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding CenaKO,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="WyslijInfoDoKO" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding WyslijInfoDoKO , Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="MonitKO" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding MonitKO , Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Upr4" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding Upr4 , Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="NrPh" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding NrPh , Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="OstAkt" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding OstAkt , Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Scale" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding Scale,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="dpiTransform" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding dpiTransform , Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="MaxData" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding MaxData , Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="MaxD" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding MaxD,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="MaxDataRok" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding MaxDataRok,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="MinData" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding MinData,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="MinD" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding MinD,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="O_Data" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding O_Data,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="WyswCennikAdmin" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding WyswCennikAdmin,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="SelectedDateMin" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding SelectedDateMin,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="SelectedDateMax" Width="{Binding ElementName=Ide, Path=ActualWidth}"/>
+                            <Label Content="{Binding SelectedDateMax,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                    
+                        </StackPanel>
+                </StackPanel>
+                <!-- Panel Blokuj Program  -->
+                <DockPanel x:Name="BlokujProgram" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#FFB6B6B6"  >
+                    <Label x:Name="LabBlok"  FontSize="36" Background="{x:Null}" Foreground="#FFEE3838" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                </DockPanel>
+
+
+
+
+                <DockPanel  x:Name="InfoTest" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#FFB6B6B6" >
+                    <StackPanel Width="400"  Height="120" VerticalAlignment="Center" Background="LightGray">
+                        <StackPanel HorizontalAlignment="Center" >
+                            <Label Content="Usunąć ZK11" HorizontalContentAlignment="Center" />
+                            <Label Content="Czy na pewno chcesz Usunąć Zk11 ?"  HorizontalContentAlignment="Center" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+                            <Label Width="100" FontWeight="Bold" Content="Anuluj" Margin="50,25,50,0" HorizontalContentAlignment="Center"/>
+                            <Label Width="100" FontWeight="Bold" Content="Zatwierdz" Margin="50,25,50,0" HorizontalContentAlignment="Center"/>
+                        </StackPanel>
+                    </StackPanel>
+                </DockPanel>
+            </Grid>
+
+        </Grid>
+    </Border>
+</Window>
+
+

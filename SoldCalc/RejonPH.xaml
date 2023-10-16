@@ -1,0 +1,95 @@
+﻿<Page x:Class="SoldCalc.RejonPH"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:SoldCalc"
+      mc:Ignorable="d" Loaded="RejonPH_Load"
+      d:DesignHeight="450" d:DesignWidth="1200"
+      Title="RejonPH"   Margin="0,-60,0,0" >
+    <Page.Resources>
+        <ResourceDictionary>
+            <ScaleTransform x:Key="windowScalePanel" ScaleX="1.2" ScaleY="1.2" />
+        </ResourceDictionary>
+    </Page.Resources>
+    <Grid Background="White">
+
+        <StackPanel LayoutTransform="{StaticResource windowScalePanel}" Visibility="Visible"  Orientation="Vertical" Width="Auto" Height="auto"   Margin="0,5,0,0" VerticalAlignment="Top"    >
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <StackPanel Orientation="Vertical" Margin="10">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock Text="Wybierz PH do usunięcia. Jeżeli to mozliwe zachowaj tylko nazwisko! W bazie zakupów PH może być przypisany zaczynając od Imienia !!!" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" Width="300" Height="auto"/>
+                        <Image x:Name="Pb1" MouseDown="PictureBox1_Click" Source="/images/TransferP.png"  Width="40" Height="40" HorizontalAlignment="Right" ToolTip="wyslij dane do ph po prawej" />
+                    </StackPanel>
+                    <ComboBox x:Name="C1" SelectionChanged="C1_SelectedIndexChanged" Width="300" IsEditable="True" TextBoxBase.TextChanged="C3_SelectedIndexChanged"/>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" VerticalAlignment="Bottom">
+                    <!--  <Button x:Name="Button2" Content="Wstaw" HorizontalAlignment="Center" Width="60" VerticalAlignment="Center" Margin="0,10,0,0" /> -->
+                    <Image x:Name="PictureBox3" MouseDown="PictureBox3_Click" Source="/images/Update.png" Width="30" Height="30" Margin="20,10,20,5" ToolTip="Odśwież" />
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Margin="10">
+                    <StackPanel Orientation="Horizontal">
+                        <Image  x:Name="Pb2" MouseDown="PictureBox1_Click" Visibility="Hidden" Source="/images/TransferL.png"  Width="40" Height="40" HorizontalAlignment="Left" ToolTip="wyslij dane do ph po lewej"/>
+                        <Label Content="Wybierz, wprowadz PH komu dane mają być przypiane" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        
+                    </StackPanel>
+                    <ComboBox x:Name="C2" SelectionChanged="C1_SelectedIndexChanged" Width="300" IsEditable="True"  TextBoxBase.TextChanged="C3_SelectedIndexChanged" />
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Margin="10">
+                    <RadioButton x:Name="RadioButton1" Checked="RadioButton1_CheckedChanged" Content="Wprowadz zmiany tylko w bazie klientów" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                    <RadioButton x:Name="RadioButton2" Checked="RadioButton1_CheckedChanged" Content="Wprowadz zmiany w całej bazie - Baza klientów, Baza zakupów" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                    <Label x:Name="Linfo">
+                        <Label.Content>
+                            <AccessText TextWrapping="Wrap" Text=""/>
+                        </Label.Content>
+                    </Label>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <StackPanel>
+                    <Button x:Name="Wyslij" Click="Wyslij_Click" Content="Wyślij do serwer" Width="150" HorizontalAlignment="Left" Margin="100,00,0,0" ToolTip="Wyślij dane na serwer SoldCalc"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="200,0,0,0" >
+
+                    <Button x:Name="ZmienPH" Click="ZmienPH_Click" Content="Zmień Listę PH" Width="150" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Zmienia dane PH z pliku excel - przywraca do zgodnej z CRM!!!!" />
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20,5,0,0">
+                        <Label x:Name="progres" Width="0"  Height="25" Background="LightGreen" Margin="3,8,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                        <Label  x:Name="HomeProg" Width="200" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Background="Transparent" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  Margin="0,-28,0,0" />
+                    </StackPanel>
+
+
+
+
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,20">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <StackPanel Orientation="Vertical" Margin="10">
+                        <ComboBox x:Name="C3" Width="300" IsEditable="True" TextBoxBase.TextChanged="C3_SelectedIndexChanged" />
+                    </StackPanel>
+                    <Label Content="Szukaj" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15,0"/>
+                    <StackPanel Orientation="Vertical" Margin="10">
+                        <TextBox x:Name="Tszukaj" Width="300" TextChanged="Tszukaj_TextChanged"/>
+                    </StackPanel>
+                </StackPanel>
+                <Label  x:Name="DowBaza" MouseDown="DowBaza_MouseDown" Margin="50,0,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"  Margin="0,-40,0,0">
+                <TextBlock FontSize="12" x:Name="XSap" Text="test" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="50,0,0,0"/>
+                <TextBlock FontSize="12" x:Name="XNazw" Text="test" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="50,0,0,0"/>
+
+            </StackPanel>
+        </StackPanel>
+
+
+        <ListView Margin="0,250,20,10" x:Name="ListRejonPH" SelectionChanged="LvListRejonPH_SelectionChanged"  BorderThickness="1,1,1,1"  BorderBrush="Black" 
+                          FontSize="10" FontWeight="Normal" Background="{x:Null}"  SelectionMode="Single" AlternationCount="2"  
+                  Width="Auto" Height="Auto"     MaxWidth="Infinity"     MaxHeight="Infinity"
+                         
+                          ScrollViewer.VerticalScrollBarVisibility="Auto" >
+            <!--ItemContainerStyle="{StaticResource StylLV}"-->
+        </ListView>
+    </Grid>
+
+</Page>

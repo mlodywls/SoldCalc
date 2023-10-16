@@ -1,0 +1,746 @@
+﻿<Page x:Class="SoldCalc.LiczOferta"
+     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"   
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:SoldCalc" 
+     
+      mc:Ignorable="d"    
+      d:DesignHeight="600" d:DesignWidth="1750"
+      Title="LiczOferta" SizeChanged="Page_SizeChanged" Margin="0,0,5,0" Loaded="Page_Loaded" MouseMove="Page_MouseMove"  >
+    <!--d:DataContext="{d:DesignInstance Type=local:TblOfr}"-->
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="Boolen_To_Visiblity"/>
+    </Page.Resources>
+    <Grid Margin="5" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Style="{StaticResource BacgrundGrid}" >
+
+        <Grid.Resources>
+            <SolidColorBrush x:Key="FontBrush" Color="#DDDDDD"/>
+            <LinearGradientBrush x:Key="BgBrush1" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Offset="0" Color="#888888"/>
+                <GradientStop Offset="1" Color="#222222"/>
+            </LinearGradientBrush>
+            <SolidColorBrush x:Key="BorderBrush1" Color="#333333"/>
+            <LinearGradientBrush x:Key="CheckedBrush" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Offset="0" Color="#555555"/>
+                <GradientStop Offset="1" Color="#111111"/>
+            </LinearGradientBrush>
+            <!-- Left Button Template -->
+            <ControlTemplate x:Key="ToggleButtonLeft" TargetType="{x:Type ToggleButton}">
+                <!--    <Border Name="Border"  Background="{StaticResource BgBrush1}" BorderBrush="{StaticResource BorderBrush1}" BorderThickness="1"  CornerRadius="5,0,0,5">-->
+                <Border Name="Border"  Background="#222222" BorderBrush="#333333" BorderThickness="1"  CornerRadius="5,0,0,5">
+                    <ContentPresenter HorizontalAlignment="Center" Margin="{TemplateBinding Padding}"  VerticalAlignment="Center" Content="{TemplateBinding Content}" TextBlock.FontWeight="Bold" TextBlock.Foreground="{StaticResource FontBrush}"/>
+                </Border>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="ToggleButton.IsMouseOver" Value="true">
+                        <Setter TargetName="Border" Property="Background" Value="#808080"/>
+                        <Setter Property="RenderTransform">
+                            <Setter.Value>
+                                <ScaleTransform ScaleX="1.1" ScaleY="1.1"  CenterX ="80" CenterY="10" />
+                            </Setter.Value>
+                        </Setter>
+                        <!-- <Setter Property="Foreground" Value="Red"/>
+                        <Setter Property="Margin" Value="10,0"/> -->
+                    </Trigger>
+
+                    <!--  <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="RenderTransform">
+                        <Setter.Value>
+                            <ScaleTransform ScaleX="1.1" ScaleY="1.1"  CenterX ="80" CenterY="10" />
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Foreground" Value="Red"/>
+                    <Setter Property="Margin" Value="10,0"/>
+                </Trigger>
+            </Style.Triggers> -->
+                    <Trigger Property="IsChecked" Value="True">
+                        <Setter TargetName="Border" Property="Background" Value="red"/>
+                        <!--     <Setter TargetName="Border" Property="Background" Value="{StaticResource CheckedBrush}"/> -->
+                    </Trigger>
+                    <Trigger Property="IsChecked" Value="False">
+                        <Setter TargetName="Border" Property="Background" Value="{StaticResource CheckedBrush}"/>
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+            <!-- Middle Button(s) Template -->
+            <ControlTemplate x:Key="ToggleButtonMid" TargetType="{x:Type ToggleButton}">
+                <Border Name="Border"  Background="{StaticResource BgBrush1}" BorderBrush="{StaticResource BorderBrush1}" BorderThickness="0,1,0,1"  CornerRadius="0" />
+                <!-- Other code identical to Left Button Template -->
+            </ControlTemplate>
+            <!-- Right Button Template -->
+            <ControlTemplate x:Key="ToggleButtonRight" TargetType="{x:Type ToggleButton}">
+                <Border  Name="Border" Background="{StaticResource BgBrush1}" BorderBrush="{StaticResource BorderBrush1}"  BorderThickness="1" CornerRadius="0, 5, 5, 0" />
+                <!-- Other code identical to Left Button Template -->
+            </ControlTemplate>
+        </Grid.Resources>
+        <!--Zdefiniowane wiersze -->
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="Gr0" Height="1.6*"/>
+            <RowDefinition x:Name="Gr1" Height="0.4*"/>
+        </Grid.RowDefinitions>
+        <!--Panel nawigacji nazwy klienta -->
+        <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="600,-50,0,0" Style="{StaticResource BacgrundGrid}" >
+            <DockPanel x:Name="OpisKl" x:FieldModifier="public" 
+                       Margin="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" Style="{StaticResource BacgrundDockPanel}" >
+                <TextBox x:Name="TxT_NrKonta"  Text="{Binding Numer_konta, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TexTOpis}"   x:FieldModifier="public" Width="Auto" Height="Auto" HorizontalAlignment="Center" FontSize="16" />
+                <TextBox  x:Name="TxT_NazwaKlient"  Text="{Binding Nazwa_klienta,  Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TexTOpis}"  x:FieldModifier="public" Width="Auto" Height="Auto" MaxWidth="300" HorizontalAlignment="Center" FontSize="16" Padding="0"   Margin="40,0,0,0"   />
+                <TextBox x:Name="TxT_PraceList" Text="{Binding PraceList,  Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"  Style="{StaticResource TexTOpis}" TextChanged="TxT_PraceList_TextChanged"  x:FieldModifier="public" Width="Auto" Height="Auto" HorizontalAlignment="Center" FontSize="16" Margin="40,0,0,0" />
+                <StackPanel Width="50" Height="Auto" HorizontalAlignment="Center" x:Name="GoBa" Margin="50,0,0,0">
+                    <Label  Width="50" Height="50" x:Name="PClear"  x:FieldModifier="public" MouseDown="PClear_MouseDown" Margin="0,0,0,0"  >
+                        <Image Source="/images/Clear.png"  Width="15" Height="15" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10,10,0,0"  Style="{StaticResource Image_Style}"  >
+                            <Image.OpacityMask>
+                                <SolidColorBrush Color="Black" Opacity="0.3"/>
+                            </Image.OpacityMask>
+                        </Image>
+                    </Label>
+                </StackPanel>
+
+            </DockPanel>
+        </Grid>
+
+        <StackPanel Orientation="Vertical" x:Name="STpanel" Margin="0,0,0,0" Grid.Row="0" Style="{StaticResource BacgrundStack}" >
+            <!--Panel nawigacji nazwy klienta -->
+            <DockPanel Margin="0,0,0,0" Style="{StaticResource BacgrundDockPanel_nakladka}">
+                <StackPanel   Orientation="Vertical" Height="Auto" Width="auto"  Margin="5" x:Name="PanelDane" >
+                    <StackPanel  x:Name="StackPanelInfo" Orientation ="Horizontal" Width="auto"  Margin="0,0,5,0">
+                        <StackPanel Orientation="Horizontal" MaxHeight="100"  Height="auto"  MaxWidth="Infinity" VerticalAlignment="Top" HorizontalAlignment="Left">
+
+                            <StackPanel Orientation="Vertical">
+                                <Label Style="{StaticResource labelStyle}" Visibility="Collapsed"  Content="Nazwa Klienta:"  Width="500" Height="25"  />
+                                <Border x:Name="b" />
+                                <TextBox Style="{StaticResource TexTOpis}"  Width="{Binding ActualWidth, ElementName=b}"  Text="{Binding Nazwa_klienta , Mode=OneWay}" Visibility="Collapsed"  x:Name="KlientNazwa" x:FieldModifier="public"  />
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical">
+                                <Label Style="{StaticResource labelStyle}"  Content="NIP"  Width="100" Height="25" />
+                                <Border x:Name="b1" />
+                                <TextBox Style="{StaticResource TexTOpis}"  Width="{Binding ActualWidth, ElementName=b1}"  Text="{Binding NIP , Mode=OneWay}" x:Name="Txt_Nip" x:FieldModifier="public" />
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical">
+                                <Label Style="{StaticResource labelStyle}" Visibility="Collapsed"   Content="SAP"  Width="100" Height="25"  />
+                                <Border x:Name="b2" />
+                                <TextBox Style="{StaticResource TexTOpis}"  Width="{Binding ActualWidth, ElementName=b2}" Text="{Binding Numer_konta , Mode=OneWay}" Visibility="Collapsed"  x:Name="T3" x:FieldModifier="public"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical">
+                                <Label Style="{StaticResource labelStyle}" Visibility="Collapsed"  Content="PraceList"  Width="150" Height="25" />
+                                <Border x:Name="b3" />
+                                <TextBox Style="{StaticResource TexTOpis}"  Width="{Binding ActualWidth, ElementName=b3}" Text="{Binding PraceList , Mode=OneWay}"  Visibility="Collapsed"  x:Name="T10" x:FieldModifier="public" />
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical">
+                                <Label Style="{StaticResource labelStyle}" Content="Branża"  Width="250" Height="25"  />
+                                <Border x:Name="b4" />
+                                <TextBox Style="{StaticResource TexTOpis}"  Width="{Binding ActualWidth, ElementName=b4}" Text="{Binding Branza , Mode=OneWay}" x:Name="T11" x:FieldModifier="public"  Background="{x:Null}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical">
+                                <Label Style="{StaticResource labelStyle}" Content="Forma Płatność"  Width="200" Height="25"  />
+                                <Border x:Name="b5" />
+                                <TextBox Style="{StaticResource TexTOpis}"  Width="{Binding ActualWidth, ElementName=b5}" Text="{Binding Forma_plac , Mode=OneWay}"  x:Name="T9" x:FieldModifier="public" />
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical" Width="300" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Label Style="{StaticResource labelStyle}" Content="Email"  Width="162" Height="25" />
+                                <!--   <TextBox      Background="Transparent" BorderThickness="0"  Text="{Binding E_mail , Mode=OneWay}" x:Name="T13" x:FieldModifier="public" IsReadOnly="True"  Width="Auto" Height="Auto" HorizontalAlignment="Left" FontSize="16" FontWeight="Bold" VerticalAlignment="Top" VerticalContentAlignment="Center" BorderBrush="{x:Null}" TextWrapping="WrapWithOverflow"/> -->
+                                <Border x:Name="b6" />
+                                <TextBox Style="{StaticResource TexTOpis}"  Width="{Binding ActualWidth, ElementName=b6}" x:Name="T13" Text="{Binding E_mail , Mode=OneWay}"/>
+                            </StackPanel>
+
+
+                        </StackPanel>
+                        <StackPanel Orientation ="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="150,0,0,0">
+                            <Label Style="{StaticResource labelStyle}" MouseDown="Label_MouseDown"  Content="Edytuj Dane" FontSize="16"  Width="100" Height="Auto" Foreground="#FFFD4646" Background="#FFF3F3F3" />
+                        </StackPanel>
+                        <!--<TextBox x:Name="Astualwyssc" Text="0" Width="100" Height="20"/>
+                        <StackPanel Orientation ="Vertical">
+                            <TextBox x:Name="wyssc" Width="100"/>
+                            <TextBox x:Name="CTRAstualwyssc" Text="0" Width="100" Height="20"/>
+                        </StackPanel>
+                        <StackPanel Orientation ="Vertical">
+                            <TextBox x:Name="Grupwyssc" Width="100"/>
+                            <TextBox x:Name="GrupAstualwyssc" Text="0" Width="100" Height="20"/>
+                        </StackPanel>-->
+
+
+                        <StackPanel Orientation ="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="150,0,0,0">
+                            <Label Style="{StaticResource labelStyle}" x:Name="LabInfoZRP" FontSize="16"  Width="AUTO" MaxWidth="300" Height="Auto"  VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch"  Foreground="#FFFD4646" >
+                                <Label.Content>
+                                    <AccessText TextWrapping="Wrap" Text=""/>
+                                </Label.Content>
+                            </Label>
+                            <Label x:Name="BladDatatableinfo"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel  Orientation="Horizontal"  x:Name="StInfo"/>
+                </StackPanel>
+            </DockPanel>
+            <!--Panel nawigacji Wyboru produktów -->
+            <StackPanel  x:Name="DocListViev" Style="{StaticResource BacgrundStack_nakladka}" >
+                <DockPanel Name="PanelZakladki"    Width="Auto" Height="60" Margin="0,0,0,-10" VerticalAlignment="Top">
+                    <StackPanel x:Name="HomeLab"    Orientation="Horizontal" Width="auto" MinWidth="600" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                        <RadioButton x:Name="Oferta"   GroupName="View"  Style="{StaticResource RadioButton_nawi}" IsChecked="True">
+                            <RadioButton.Content>
+                                <TextBlock Text="Oferta" Style="{StaticResource RadioButton_Content}" />
+                            </RadioButton.Content>
+                        </RadioButton>
+                        <RadioButton x:Name="HistZak"  GroupName="View"   Style="{StaticResource RadioButton_nawi}" IsChecked="False" >
+                            <RadioButton.Content>
+                                <TextBlock Text="Historia zakupów" Style="{StaticResource RadioButton_Content}"/>
+                            </RadioButton.Content>
+                        </RadioButton>
+                        <RadioButton x:Name="ZapisOFR" GroupName="View"   Style="{StaticResource RadioButton_nawi}" IsChecked="False">
+                            <RadioButton.Content>
+                                <TextBlock Text="Zapis. prod. w Ofertach" Style="{StaticResource RadioButton_Content}"/>
+                            </RadioButton.Content>
+                        </RadioButton>
+                        <RadioButton x:Name="ZapisZK"  GroupName="View"   Style="{StaticResource RadioButton_nawi}" IsChecked="False" >
+                            <RadioButton.Content>
+                                <TextBlock Text="Produkty ZK11" Style="{StaticResource RadioButton_Content}"/>
+                            </RadioButton.Content>
+                        </RadioButton>
+                        <RadioButton x:Name="AnalizaBR"  GroupName="View"  Style="{StaticResource RadioButton_nawi}"  IsChecked="False" >
+                            <RadioButton.Content>
+                                <TextBlock Text="Analiza Branża" Style="{StaticResource RadioButton_Content}"/>
+                            </RadioButton.Content>
+                        </RadioButton>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Name="StWst"  Width="300" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                        <Border  Background="#FF8B5E5E" Name="HomeWstaw"  Width="300"  Padding="1" CornerRadius="5,5,5,5"   BorderThickness="1" >
+                            <Label x:Name="WstawProd" Width="297" Height="33"  Content="Wstaw"   
+                                   MouseDown="Add_Prod_Do_Lista" KeyDown="Cennik_KeyDown" Style="{StaticResource labelStyle}" FontSize="16"  Foreground="#EF5350" Background="#FFECECEC"  FontFamily="Franklin Gothic Heavy" Margin="0,0,0,0" Padding="6"  />
+                        </Border>
+                    </StackPanel>
+                    <StackPanel x:Name="ComOFR" Orientation="Horizontal" Margin="0,0,0,0" Background="#FFECECEC">
+                        <ComboBox x:Name="ComboOfr"  IsEditable="True" TextBoxBase.TextChanged="LOComboOfr_SChanged"   Width="350" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" Margin="20,0,20,0"  />
+                        <Label Content="Zapisane oferty" x:Name="LabNazw" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="-650,-2,0,0" Opacity="0.5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+
+                    </StackPanel>
+                    <Button Visibility="Collapsed" Content="Szukaj" Width="100"  Height="20" VerticalAlignment="Top" Margin="30,5,10,0" Click="Szukaj_folder"/>
+                </DockPanel>
+                <DockPanel  Margin="0,5,0,0"  >
+                    <StackPanel Visibility="Visible"  Orientation="Vertical" Width="Auto"  Height="Auto"    >
+                        <StackPanel Visibility="{Binding IsChecked, ElementName=Oferta, Converter={StaticResource Boolen_To_Visiblity},Mode=TwoWay}" 
+                                   x:Name="OFR" Orientation="Vertical" Width="Auto" Height="Auto" Margin="0,5,0,0" Style="{StaticResource BacgrundStack_nakladka2}">
+                            <StackPanel Orientation="Horizontal" Margin="5,5,0,0" Height="{Binding ElementName=TxtAddProd, Path=Height}"  VerticalAlignment="Top">
+
+                                <StackPanel Orientation="Horizontal" Margin="30,0,0,0">
+                                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White" >
+                                        <Label Grid.Column="1" Opacity="0.5"  Margin="10,0,0,0" Height="{Binding ElementName=TxtAddProd, Path=Height}"   Background="{x:Null}" Padding="5,5,5,5"  x:Name="SzukajTxt"  HorizontalAlignment="Center" Width="490" Content="Szukaj Produktu" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal"  Margin="-500,0,0,0" >
+                                        <TextBox x:Name="TxtAddProd"   Width="500" Height="35" FontSize="18" FontWeight="Bold" Background="{x:Null}" TextChanged="TextBox_TextChanged" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  HorizontalAlignment="Center"  />
+                                        <Label x:Name="czyscTxtOfr" MouseDown="czyscTxtOfr_MouseDown" Visibility="Collapsed" Content="x" Width="40" Height="40" Background="{x:Null}" FontFamily="Bahnschrift Light" FontSize="25" HorizontalAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="-3,-5,5,5" Margin="-40,0,0,0" />
+                                    </StackPanel>
+                                </StackPanel>
+                                <ComboBox x:Name="CombGr1" Style="{StaticResource CombProd}"        DisplayMemberPath="GRUPA"       IsEditable="True" TextBoxBase.TextChanged="ComboBox1_TextChanged" Width="200" Height="{Binding ElementName=TxtAddProd, Path=Height}"   MinWidth="200" />
+                                <Label    x:Name="LabComb" Style="{StaticResource VisiblityLabInf}" Content="Szukaj grupy" Width="80" Margin="-320,1,0,0" Opacity="0.5" Height="{Binding ElementName=TxtAddProd, Path=Height}" VerticalAlignment="Center" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"   />
+                                <ComboBox x:Name="CombGr2" Style="{StaticResource VisiblityCombo2}" DisplayMemberPath="KATEGORIA"   IsEditable="True" TextBoxBase.TextChanged="ComboBox2_TextChanged" Width="200" Height="{Binding ElementName=TxtAddProd, Path=Height}"   MinWidth="200" />
+                                <ComboBox x:Name="CombGr3" Style="{StaticResource VisiblityCombo3}" DisplayMemberPath="NAZEWNICTWO" IsEditable="True" TextBoxBase.TextChanged="ComboBox3_TextChanged" Width="200" Height="{Binding ElementName=TxtAddProd, Path=Height}"  MinWidth="200" />
+                            </StackPanel>
+
+                            <StackPanel x:Name="PCennik"  Visibility="Visible" Width="Auto" Height="Auto" Margin="0,5,0,0" >
+                                <ListView x:Name="Cennik"  KeyDown="Cennik_KeyDown"   Height="330" Width="Auto"  MaxWidth="Infinity" Margin="0,0,0,0"  SelectionMode="Multiple"
+                                            ItemsSource="{Binding Source=ListCennik, NotifyOnTargetUpdated=True}" TargetUpdated="courseView_TargetUpdated" SizeChanged="Cennik_SizeChanged"
+                                            Style="{StaticResource StyleListViev}" 
+                                            ItemContainerStyle="{StaticResource ListViewItem_Cennik }"  >
+                                    <ListView.Resources>
+                                        <!--<local:ColumnWidthConverter x:Key="Cennik" />-->
+                                    </ListView.Resources>
+                                    <ListView.View>
+                                        <GridView ColumnHeaderContainerStyle ="{StaticResource StyleListVievColumnStyle }" >
+
+                                            <GridViewColumn x:Name="gridClm_SelectRow">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <CheckBox Name="cbSelectRow"   Tag="{Binding SAP , Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"  IsThreeState="False"  
+                                                                IsChecked="{Binding Path=IsSelected, RelativeSource={RelativeSource FindAncestor,  AncestorType={x:Type ListViewItem}},  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"                                                                                                								                  
+										                        Checked="Chack_Add_Checked"  Unchecked="Chack_Delete_Unchecked" />
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                                <CheckBox Margin="0" x:Name="chkSelectAll" Click="LOchkSelectAll_Click"/>
+                                            </GridViewColumn>
+                                            <GridViewColumn Header="SAP"  Width="100">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBox Width="80"  Text="{Binding SAP,  Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TexBboxAsListview}" />
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                            <GridViewColumn Header="Nazwa produktu" DisplayMemberBinding="{Binding NazwProd,    Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="Auto"  />
+                                            <GridViewColumn Header="Kszt"           DisplayMemberBinding="{Binding Kszt,        Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
+                                            <GridViewColumn Header="Pojemność"      DisplayMemberBinding="{Binding Poj,         Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
+                                            <GridViewColumn Header="CDM"            DisplayMemberBinding="{Binding CDM,         Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
+                                            <GridViewColumn Header="KO"             DisplayMemberBinding="{Binding Path=CK ,    Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="{Binding Path=Text, ElementName=Lloc}"/>
+                                            <GridViewColumn Header="PH"             DisplayMemberBinding="{Binding PH ,         Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="80"  />
+                                            <GridViewColumn Header="ZPR0"           DisplayMemberBinding="{Binding ZPR0,        Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
+                                            <GridViewColumn Header="BrakPrace"      DisplayMemberBinding="{Binding BrakPrace,   Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="100"/>
+                                            <GridViewColumn Header="Img" Width="60" >
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Label  Width="35" Height="40" MouseDown="ListViewItem_Img_clik" Tag="{Binding SAP }" >
+                                                            <Image Name="MyImage"  Style="{StaticResource LVImage_Style}"  Source="{Binding Img, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="25" Height="25"  Tag="{Binding SAP}" />
+                                                        </Label>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                            <GridViewColumn Header="TDS" Width="60" >
+                                                <GridViewColumn.CellTemplate >
+                                                    <DataTemplate >
+                                                        <Label  Width="35" Height="40" MouseDown="ListViewItem_Tds_clik" Tag="{Binding SAP}" Style="{StaticResource ColTds}"  >
+                                                            <Image Source="Resources/PDF.png"  Style="{StaticResource LVImage_Style}"  Width="25" Height="25"  Tag="{Binding SAP}" />
+                                                        </Label>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                            <GridViewColumn Header="K_Char" Width="60"  >
+                                                <GridViewColumn.CellTemplate >
+                                                    <DataTemplate >
+                                                        <Label  Width="35" Height="40" MouseDown="ListViewItem_Char_clik" Tag="{Binding SAP}"  Style="{StaticResource ColKartChar}" >
+                                                            <Image Source="Resources/PDF.png"  Style="{StaticResource LVImage_Style}"  Width="25" Height="25"  Tag="{Binding SAP}"/>
+                                                        </Label>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                                
+                                <StackPanel  x:Name="Spr_Wstawine_Admin" Style="{StaticResource WyswietlPomocCennikAdmin}" Orientation="Vertical" Width="Auto" Height="Auto" Margin="0,5,0,0" >
+                                    <ListView  x:Name="List_Add_prodList"  Margin="0,10,20,10" BorderThickness="1,1,1,1"  
+                                               ItemContainerStyle="{StaticResource ListViewItem_Cennik }"   
+                                               Style="{StaticResource StyleListViev}"     MaxWidth="Infinity"  MaxHeight="Infinity"  AlternationCount="2" 
+                                                                                       
+                                                  >
+                                        <!--DataContext="{Binding ListTblOfr}"  ItemsSource="{Binding Tbl_Add_prodList}"-->
+                                        <!--  DataContext="{Binding TblOfr}"    d:DataContext="{d:DesignInstance Type=local:TblOfr}"-->
+                                        <ListView.View>
+                                            <GridView >
+                                                <GridViewColumn Header="ID"                     DisplayMemberBinding="{Binding ID ,                     Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"  />
+                                                <GridViewColumn Header="Nd"                     DisplayMemberBinding="{Binding ND,                      Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"  />
+                                                <GridViewColumn Header="Naglowek"               DisplayMemberBinding="{Binding Naglowek,                Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
+                                                <GridViewColumn Header="Lpgrup"                 DisplayMemberBinding="{Binding Lpgrup,                  Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
+                                                <GridViewColumn Header="SAP"                    DisplayMemberBinding="{Binding SAP,                     Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
+                                                <GridViewColumn Header="NazwProd"               DisplayMemberBinding="{Binding NazwProd,                Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
+                                                <GridViewColumn Header="GRUPA "                 DisplayMemberBinding="{Binding GRUPA,                   Mode=OneWay, UpdateSourceTrigger=PropertyChanged }" Width="50"/>
+                                                <GridViewColumn Header="KATEGORIA"              DisplayMemberBinding="{Binding KATEGORIA,               Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
+                                                <GridViewColumn Header="NAZEWNICTWO"            DisplayMemberBinding="{Binding NAZEWNICTWO,             Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
+                                                <GridViewColumn Header="Kszt"                   DisplayMemberBinding="{Binding Kszt,                    Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
+                                                <GridViewColumn Header="Poj"                    DisplayMemberBinding="{Binding Poj,                     Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"  />
+                                                <GridViewColumn Header="CDM"                    DisplayMemberBinding="{Binding CDM,                     Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"  />
+
+                                                <GridViewColumn Header="KO"                     DisplayMemberBinding="{Binding KO,                      Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
+                                                <GridViewColumn Header="PH"                     DisplayMemberBinding="{Binding PH,                      Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
+                                                <GridViewColumn Header="ZPR0"                   DisplayMemberBinding="{Binding ZPR0,                    Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
+                                                <GridViewColumn Header="BrakPrace"              DisplayMemberBinding="{Binding BrakPrace,               Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
+                                                <GridViewColumn Header="ZK11A1 "                DisplayMemberBinding="{Binding ZK11A1 ,                 Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
+                                                <GridViewColumn Header="ZK11A2"                 DisplayMemberBinding="{Binding ZK11A2,                  Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
+                                                <GridViewColumn Header="ZK11A3"                 DisplayMemberBinding="{Binding ZK11A3,                  Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
+                                                <GridViewColumn Header="szt1"                   DisplayMemberBinding="{Binding szt1,                    Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
+                                                <GridViewColumn Header="szt2"                   DisplayMemberBinding="{Binding szt2,                    Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"  />
+                                                <GridViewColumn Header="szt3"                   DisplayMemberBinding="{Binding szt3,                    Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"  />
+                                                <GridViewColumn Header="CenaZPrace"             DisplayMemberBinding="{Binding CenaZPrace,              Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
+                                                <GridViewColumn Header="Cena_zapis_do_OFR"      DisplayMemberBinding="{Binding Cena_zapis_do_OFR,       Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
+                                                <GridViewColumn Header="Opis_Cena_zapis_do_OFR" DisplayMemberBinding="{Binding Opis_Cena_zapis_do_OFR,  Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="50"/>
+                                                <GridViewColumn Header="CenaDoOFR"              DisplayMemberBinding="{Binding CenaDoOFR,               Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="70"/>
+                                                <GridViewColumn Header="CenaDoOFR2"             DisplayMemberBinding="{Binding CenaDoOFR2,              Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="70"/>
+                                                <GridViewColumn Header="CenaDoOFR3"             DisplayMemberBinding="{Binding CenaDoOFR3,              Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="70"/>
+                                                <GridViewColumn Header="Marza"                  DisplayMemberBinding="{Binding Marza,                   Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="70"/>
+                                                <GridViewColumn Header="Marza2"                 DisplayMemberBinding="{Binding Marza2,                  Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="70"/>
+                                                <GridViewColumn Header="Marza3"                 DisplayMemberBinding="{Binding Marza3,                  Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="70"  />
+                                            </GridView>
+                                        </ListView.View>
+                                    </ListView>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!--Panel Historia zakupow -->
+                        <StackPanel x:Name="HistoriaZKP" Visibility="{Binding IsChecked, ElementName=HistZak, Converter={StaticResource Boolen_To_Visiblity},Mode=TwoWay}"  Orientation="Vertical" Width="Auto" Height="Auto" Margin="0,5,0,0" Style="{StaticResource BacgrundStack}">
+                            <!--<StackPanel x:Name="HistoriaZKP" Visibility="Collapsed"  Orientation="Vertical" Width="Auto" Height="Auto" Margin="0,5,0,0" Style="{StaticResource BacgrundStack}">-->
+
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel Orientation="Horizontal" Width="690">
+                                    <TextBox x:Name="SapPr" Margin="10,0" IsReadOnly="True" Background="{x:Null}" FontSize="14" Width="70" FontWeight="Bold" Foreground="#FFFB0202" VerticalAlignment="Center" HorizontalAlignment="Center" BorderBrush="{x:Null}" SelectionBrush="#FFB1B6B9"/>
+                                    <Label x:Name="NazwaPR" MinWidth="350" Margin="10,0" FontSize="14" Foreground="#FFFD0000" Background="{x:Null}" FontWeight="Bold" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <DataGrid x:Name="HistoriaZakup"   Margin="0,0,0,0"  MaxWidth="Infinity"  MaxHeight="350"  SelectionMode="Single" 
+                                     PreviewKeyDown="Cennik_KeyDown"   Style="{StaticResource StyleGridViev}"
+                                         SizeChanged="Cennik_SizeChanged" SelectionChanged="LvUsers_SelectionChanged" 
+                                         HorizontalGridLinesBrush="Gray" >
+                                <!--    KeyDown="Cennik_KeyDown" -->
+                                <DataGrid.Resources>
+                                    <Style BasedOn="{StaticResource DataGrid_ColumnHeader_style}" TargetType="{x:Type DataGridColumnHeader}" />
+                                    <Style BasedOn="{StaticResource BaseOnIsMouse}" TargetType="{x:Type DataGridRow}" />
+                                    <!--<Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="{x:Type DataGridCell}" >
+                                        <Setter Property="TextBlock.TextAlignment" Value="Center" />
+                                    </Style>-->
+                                </DataGrid.Resources>
+                            </DataGrid>
+
+
+                            <DataGrid x:Name="HistoriaZakupViev"  Margin="0,0,0,0"   MaxWidth="Infinity"  MaxHeight="350"  SelectionMode="Single" 
+                                            SizeChanged="Cennik_SizeChanged" BorderBrush="LightGray" BorderThickness="1,10,1,5" >
+                                <!--ItemContainerStyle="{StaticResource ListViewItem_Cennik }"-->
+                                <DataGrid.Resources>
+                                    <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}"  TargetType="{x:Type DataGridColumnHeader}" >
+                                        <Setter Property="FontFamily" Value="Microsoft Sans Serif"/>
+                                        <Setter Property="Background"  Value="{x:Null}"/>
+                                        <Setter Property="FontSize" Value="10"/>
+                                        <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+                                        <Setter Property="BorderThickness" Value="1,1,1,1" />
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                        <Setter Property="VerticalAlignment" Value="Stretch"/>
+                                    </Style>
+
+                                </DataGrid.Resources>
+                            </DataGrid>
+
+                        </StackPanel>
+
+                        <!--Panel Zapisane oferty -->
+                        <DockPanel x:Name="ZapisOfert" Visibility="{Binding IsChecked, ElementName=ZapisOFR, Converter={StaticResource Boolen_To_Visiblity},Mode=TwoWay}"
+                                   Width="Auto" Height="Auto" Margin="0,5,0,0" Style="{StaticResource BacgrundDockPanel}" >
+                            <!--<DockPanel x:Name="ZapisOfert" Visibility="Collapsed"
+                                   Width="Auto" Height="Auto" Margin="0,5,0,0" Style="{StaticResource BacgrundDockPanel}" >-->
+                            <ListView x:Name="ZapisaneOferty" Visibility="Visible"  Style="{StaticResource StyleListViev}" KeyDown="Cennik_KeyDown"   SizeChanged="Cennik_SizeChanged" 
+                                        Height="330" Width="Auto"  MaxWidth="Infinity" Margin="0,0,0,0"   SelectionMode="Multiple" ItemContainerStyle="{StaticResource ListViewItem_Cennik }"  >
+                                <ListView.View>
+                                    <GridView ColumnHeaderContainerStyle ="{StaticResource StyleListVievColumnStyle }" >
+                                        <GridViewColumn x:Name="DGVOFR_SelectRow">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <CheckBox Name="DGVOFRSelectRow" IsChecked="{Binding RelativeSource={RelativeSource FindAncestor,
+                                                            AncestorType={x:Type ListViewItem}}, Path=IsSelected}"  HorizontalContentAlignment="Center"  HorizontalAlignment="Center"  VerticalAlignment="Center"
+                                                            Tag="{Binding SAP}"   Checked="Chack_Add_Checked"  Unchecked="Chack_Delete_Unchecked"  IsThreeState="False"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate >
+                                            <CheckBox Margin="0" x:Name="DGVOFRchkSelectAll" Click="LOchkSelectAll_Click"/>
+                                        </GridViewColumn >
+                                        <GridViewColumn Header="Data" DisplayMemberBinding="{Binding Data}" Width="150"  />
+                                        <!--<GridViewColumn Header="Numer konta" DisplayMemberBinding="{Binding Numer_konta}" Width="Auto"/>-->
+                                        <GridViewColumn Header="SAP" DisplayMemberBinding="{Binding SAP}" Width="80"/>
+                                        <GridViewColumn Header="Nazwa Produktu" DisplayMemberBinding="{Binding NazwProd}" Width="80"/>
+                                        <GridViewColumn Header="ZK do ofr"  DisplayMemberBinding="{Binding ZK1 }" Width="150"/>
+                                        <GridViewColumn Header="Cena Do Oferty - zł"  DisplayMemberBinding="{Binding CenaDoOFR }" Width="150"/>
+
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </DockPanel>
+                        <!--Panel ZK11 -->
+                        <StackPanel x:Name="HistZK11"   Visibility="{Binding IsChecked, ElementName=ZapisZK, Converter={StaticResource Boolen_To_Visiblity},Mode=TwoWay}" Orientation="Vertical" Width="Auto" Height="Auto" Margin="0,5,0,0" Style="{StaticResource BacgrundStack}" >
+                            <!--<StackPanel  x:Name="HistZK11"   Visibility="Collapsed" Orientation="Vertical" Width="Auto" Height="Auto" Margin="0,5,0,0" Style="{StaticResource BacgrundStack}" >-->
+
+                            <ListView  x:Name="DataZK11" Style="{StaticResource StyleListViev}"  Height="320" Width="Auto"   MaxWidth="Infinity" Margin="0,0,00,0"  SelectionMode="Multiple"  
+                                           SizeChanged="Cennik_SizeChanged" KeyDown="Cennik_KeyDown"  ItemContainerStyle="{StaticResource ListViewItem_Cennik }"   ItemsSource="{Binding Source= ListZapisZK, NotifyOnTargetUpdated=True}"  >
+                                <ListView.Resources>
+                                    <DataTemplate x:Key="Templ">
+                                        <TextBlock HorizontalAlignment="Left" Text="{Binding}"/>
+                                    </DataTemplate>
+                                    <Style x:Key="HeaderStyle" TargetType="GridViewColumnHeader">
+                                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                    </Style>
+                                </ListView.Resources>
+                                <ListView.View>
+                                    <GridView ColumnHeaderContainerStyle ="{StaticResource StyleListVievColumnStyle }" >
+                                        <GridViewColumn x:Name="ZK_SelectRow">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <CheckBox Name="ZKSelectRow" IsChecked="{Binding RelativeSource={RelativeSource FindAncestor,
+                                                                    AncestorType={x:Type ListViewItem}}, Path=IsSelected}" HorizontalContentAlignment="Center"  HorizontalAlignment="Center"   VerticalAlignment="Center"
+                                                                    Tag="{Binding NrSAP}"
+										                           Checked="Chack_Add_Checked"  Unchecked="Chack_Delete_Unchecked"  IsThreeState="False"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                            <CheckBox Margin="0" x:Name="ZKchkSelectAll" Click="LOchkSelectAll_Click"/>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="NIP" DisplayMemberBinding=          "{Binding NIP}" Width="150"  />
+                                        <GridViewColumn Header="SAP" DisplayMemberBinding=          "{Binding NrSAP}" Width="150"/>
+                                        <GridViewColumn Header="Nazwa Produktu" DisplayMemberBinding="{Binding NazwProd}" Width="150"/>
+                                        <GridViewColumn Header="ZK11- 1" DisplayMemberBinding=      "{Binding ZK1 }" Width="80"/>
+                                        <GridViewColumn Header="Szt ZK11-1"  DisplayMemberBinding=  "{Binding ZK1Info}" Width="120"/>
+                                        <GridViewColumn Header="ZK11- 2" DisplayMemberBinding=      "{Binding ZK2}" Width="80"/>
+                                        <GridViewColumn Header="Szt ZK11-2"  DisplayMemberBinding=  "{Binding ZK2Info}" Width="120"/>
+                                        <GridViewColumn Header="ZK11- 3"  DisplayMemberBinding=     "{Binding ZK3}" Width="80"/>
+                                        <GridViewColumn Header="Szt ZK11-3"  DisplayMemberBinding=  "{Binding ZK3Info}" Width="120"/>
+                                        <GridViewColumn Header="Usuń" Width="50" >
+                                            <GridViewColumn.CellTemplate >
+                                                <DataTemplate >
+                                                    <Label  MouseDown="Usun_ZK11" Content="x" Tag="{Binding NrSAP}" Opacity="0.4" Style="{StaticResource CaptionLabelClear}" ToolTip="Usuń ZK11!" >
+                                                        <!--   <Image Source="images/Clear.png"  Style="{StaticResource LVImage_Style}"  Width="15" Height="15"  Tag="{Binding NrSAP}"  /> -->
+                                                    </Label>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </StackPanel>
+
+
+                        <!--Panel Zapisane oferty -->
+                        <DockPanel x:Name="AnalizaZakup" Visibility="{Binding IsChecked, ElementName=AnalizaBR, Converter={StaticResource Boolen_To_Visiblity},Mode=TwoWay}"
+                                   Width="Auto" Height="Auto" Margin="0,5,0,0" Style="{StaticResource BacgrundDockPanel}" >
+                            <!--  AutoGenerateColumns="False"  CanUserAddRows="false" CanUserDeleteRows="False" SelectionUnit="FullRow"-->
+                            <StackPanel Orientation="Horizontal" Visibility="Collapsed">
+                                <StackPanel Orientation="Horizontal" Width="690">
+                                    <TextBox x:Name="AnalizaSapPr" Margin="10,0" IsReadOnly="True" Background="{x:Null}" FontSize="14" Width="70" FontWeight="Bold" Foreground="#FFFB0202" VerticalAlignment="Center" HorizontalAlignment="Center" BorderBrush="{x:Null}" SelectionBrush="#FFB1B6B9"/>
+                                    <TextBox x:Name="AnalizaNazwaPR"  MinWidth="350" Margin="10,0" FontSize="14" Foreground="#FFFD0000" Background="{x:Null}" FontWeight="Bold" VerticalAlignment="Center"/>
+
+                                </StackPanel>
+                            </StackPanel>
+
+                            <DataGrid Name="AnalizaBranza"  AutoGenerateColumns="False"  
+                                  Margin="0,0,0,0"  MaxWidth="Infinity"  MaxHeight="350"  SelectionMode="Single" 
+                                        PreviewKeyDown="Cennik_KeyDown"   Style="{StaticResource StyleGridViev}"
+                                        SizeChanged="Cennik_SizeChanged" 
+                                        SelectionChanged="AnalizaBranza_SelectionChanged"
+                                        HorizontalGridLinesBrush="Gray">
+
+                                <DataGrid.Resources>
+                                    <Style BasedOn="{StaticResource DataGrid_ColumnHeader_style}" TargetType="{x:Type DataGridColumnHeader}" />
+                                    <Style BasedOn="{StaticResource BaseOnIsMouse}" TargetType="{x:Type DataGridRow}" />
+                                </DataGrid.Resources>
+                                <DataGrid.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <Setter Property="BorderThickness" Value="0"/>
+                                    </Style>
+                                </DataGrid.CellStyle>
+
+                                <DataGrid.RowHeaderTemplate>
+                                    <DataTemplate>
+                                        <Expander Expanded="Expander_Expanded" Collapsed="Expander_Collapsed"/>
+                                    </DataTemplate>
+                                </DataGrid.RowHeaderTemplate>
+
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn x:Name="c1" Header="SAP"            IsReadOnly="True" Binding="{Binding A_NrSAP}"       Width="100"/>
+                                    <DataGridTextColumn x:Name="c2" Header="Produkt"        IsReadOnly="True" Binding="{Binding A_NazwProd}"    Width="auto"/>
+                                    <!--<DataGridTextColumn x:Name="c3" Header="All szt Branża" IsReadOnly="True" Binding="{Binding ALLQuantity}"   Width="100"/>-->
+
+                                    <DataGridTemplateColumn x:Name="c3" Header="% udział w sprzedaży"  IsReadOnly="True" Width="100">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Vertical"   VerticalAlignment ="Center" ToolTip="{Binding ALLQ}"  >
+                                                    <ProgressBar Value="{Binding ALLQuantity}" Maximum="100" Style="{StaticResource ProgStyle}" ToolTip="{Binding ALLQ}"  />
+                                                    <Label Content="{Binding ALLQuantity }"  Style="{StaticResource AlgCentLabel_marg}" ToolTip="{Binding ALLQ}"   />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <DataGridTemplateColumn x:Name="c4" Header="2023"   IsReadOnly="True" Width="100" >
+                                        <DataGridTemplateColumn.CellTemplate >
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Vertical"   VerticalAlignment ="Center" ToolTip="{Binding Sztt1}"  >
+                                                    <ProgressBar Value="{Binding Szt_r1}" Maximum="100" Style="{StaticResource ProgStyle}" ToolTip="{Binding Sztt1}"  />
+                                                    <Label Content="{Binding Szt_r1 }"  Style="{StaticResource AlgCentLabel_marg}" ToolTip="{Binding Sztt1}"  />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn x:Name="c5" Header="2022"   IsReadOnly="True" Width="100">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Vertical"   VerticalAlignment ="Center" ToolTip="{Binding Sztt2}">
+                                                    <ProgressBar Value="{Binding Szt_r2}" Maximum="100" Style="{StaticResource ProgStyle}" ToolTip="{Binding Sztt2}"  />
+                                                    <Label Content="{Binding Szt_r2}" Style="{StaticResource AlgCentLabel_marg}"  ToolTip="{Binding Sztt2}"  />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn x:Name="c6" Header="2021"   IsReadOnly="True" Width="100">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Vertical"   VerticalAlignment ="Center" ToolTip="{Binding Sztt3 }">
+                                                    <ProgressBar Value="{Binding Szt_r3}" Maximum="100" Style="{StaticResource ProgStyle}" ToolTip="{Binding Sztt3}"  />
+                                                    <Label Content="{Binding Szt_r3}" Style="{StaticResource AlgCentLabel_marg}"  ToolTip="{Binding Sztt3}" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn x:Name="c7" Header="2020"   IsReadOnly="True" Width="100">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Vertical"  VerticalAlignment ="Center" ToolTip="{Binding Sztt4}">
+                                                    <ProgressBar Value="{Binding Szt_r4}" Maximum="100" Style="{StaticResource ProgStyle}" ToolTip= "{Binding Sztt4}"  />
+                                                    <Label Content="{Binding Szt_r4}" Style="{StaticResource AlgCentLabel_marg}"  ToolTip="{Binding Sztt4}"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+
+                                <DataGrid.RowDetailsTemplate>
+                                    <DataTemplate>
+                                        <!--<TextBlock Text="{Binding Isi, Converter={StaticResource ResourceKey=isiTextConverter}}" Margin="10,5,0,0" />-->
+                                        <StackPanel Orientation="Horizontal"   >
+
+                                            <StackPanel Width="{Binding ElementName=c1,Path=ActualWidth }" Orientation="Horizontal" />
+
+
+                                            <StackPanel Orientation="Vertical" Width="{Binding ElementName=c2,Path=ActualWidth }" Background="#FFEDD1D1" >
+
+                                                <Border Style="{StaticResource STBorder}" >
+                                                    <StackPanel Orientation="Horizontal" >
+                                                        <Label Content="Poniżej 10 kartonów" Style="{StaticResource AlgCentLabel}"/>
+                                                    </StackPanel>
+                                                </Border>
+                                                <Border Style="{StaticResource STBorder}" >
+                                                    <StackPanel Orientation="Horizontal"  >
+                                                        <Label Content="Powyżej 10 kartonów" Style="{StaticResource AlgCentLabel}"/>
+                                                    </StackPanel>
+                                                </Border>
+                                                <Border Style="{StaticResource STBorder}" >
+                                                    <StackPanel Orientation="Horizontal"  >
+                                                        <Label Content="Powyżej 1/2 palety" Style="{StaticResource AlgCentLabel}"/>
+                                                    </StackPanel>
+                                                </Border>
+                                                <Border Style="{StaticResource STBorder}" >
+                                                    <StackPanel Orientation="Horizontal"  >
+                                                        <Label Content="Powyżej 1 paleta" Style="{StaticResource AlgCentLabel}"/>
+                                                    </StackPanel>
+                                                </Border>
+
+                                            </StackPanel>
+
+                                            <StackPanel Width="{Binding ElementName=c4,Path=ActualWidth }"/>
+
+                                            <StackPanel Orientation="Vertical" Width="{Binding ElementName=c4,Path=ActualWidth }" >
+                                                <Border Style="{StaticResource STBorder}" >
+                                                    <StackPanel Orientation="Vertical">
+                                                        <ProgressBar Value="{Binding Szt_r1_pon_10}" Maximum="100" Style="{StaticResource ProgStyle}" />
+                                                        <Label Content="{Binding Szt_r1_pon_10}" Style="{StaticResource AlgCentLabel_marg}" />
+                                                    </StackPanel>
+                                                </Border>
+                                                <Border Style="{StaticResource STBorder}" >
+                                                    <StackPanel Orientation="Vertical">
+                                                        <ProgressBar Value="{Binding Szt_r1_pow_10}" Maximum="100" Style="{StaticResource ProgStyle}" />
+                                                        <Label Content="{Binding Szt_r1_pow_10}" Style="{StaticResource AlgCentLabel_marg}" />
+                                                    </StackPanel>
+                                                </Border>
+                                                <Border Style="{StaticResource STBorder}" >
+                                                    <StackPanel Orientation="Vertical">
+                                                        <ProgressBar Value="{Binding Szt_r1_polPal}" Maximum="100" Style="{StaticResource ProgStyle}"  />
+                                                        <Label Content="{Binding Szt_r1_polPal}" Style="{StaticResource AlgCentLabel_marg}"  />
+                                                    </StackPanel>
+                                                </Border>
+                                                <Border Style="{StaticResource STBorder}" >
+                                                    <StackPanel Orientation="Vertical">
+                                                        <ProgressBar Value="{Binding Szt_r1_Pal}" Maximum="100"  Style="{StaticResource ProgStyle}" />
+                                                        <Label Content="{Binding Szt_r1_Pal}" Style="{StaticResource AlgCentLabel_marg}"  />
+                                                    </StackPanel>
+                                                </Border>
+
+                                            </StackPanel>
+
+                                            <StackPanel Orientation="Vertical" Width="{Binding ElementName=c5,Path=ActualWidth }" >
+                                                <Border Style="{StaticResource STBorder}" >
+                                                    <StackPanel Orientation="Vertical">
+                                                        <ProgressBar Value="{Binding Szt_r2_pon_10}" Maximum="100" Style="{StaticResource ProgStyle}" />
+                                                        <Label Content="{Binding Szt_r2_pon_10}" Style="{StaticResource AlgCentLabel_marg}" />
+                                                    </StackPanel>
+                                                </Border>
+                                                <Border Style="{StaticResource STBorder}" >
+                                                    <StackPanel Orientation="Vertical">
+                                                        <ProgressBar Value="{Binding Szt_r2_pow_10}" Maximum="100" Style="{StaticResource ProgStyle}" />
+                                                        <Label Content="{Binding Szt_r2_pow_10}" Style="{StaticResource AlgCentLabel_marg}" />
+                                                    </StackPanel>
+                                                </Border>
+                                                <Border Style="{StaticResource STBorder}" >
+                                                    <StackPanel Orientation="Vertical">
+                                                        <ProgressBar Value="{Binding Szt_r2_polPal}" Maximum="100" Style="{StaticResource ProgStyle}" />
+                                                        <Label Content="{Binding Szt_r2_polPal}"  Style="{StaticResource AlgCentLabel_marg}"/>
+                                                    </StackPanel>
+                                                </Border>
+                                                <Border Style="{StaticResource STBorder}" >
+                                                    <StackPanel Orientation="Vertical">
+                                                        <ProgressBar Value="{Binding Szt_r2_Pal}" Maximum="100" Style="{StaticResource ProgStyle}" />
+                                                        <Label Content="{Binding Szt_r2_Pal}" Style="{StaticResource AlgCentLabel_marg}" />
+                                                    </StackPanel>
+                                                </Border>
+
+                                            </StackPanel>
+
+                                            <StackPanel Orientation="Vertical" Width="{Binding ElementName=c6,Path=ActualWidth }" >
+
+                                                <Border Style="{StaticResource STBorder}" >
+                                                    <StackPanel Orientation="Vertical">
+                                                        <ProgressBar Value="{Binding Szt_r3_pon_10}" Maximum="100" Style="{StaticResource ProgStyle}" />
+                                                        <Label Content="{Binding Szt_r3_pon_10}" Style="{StaticResource AlgCentLabel_marg}" />
+                                                    </StackPanel>
+                                                </Border>
+                                                <Border Style="{StaticResource STBorder}" >
+                                                    <StackPanel Orientation="Vertical">
+                                                        <ProgressBar Value="{Binding Szt_r3_pow_10}" Maximum="100" Style="{StaticResource ProgStyle}" />
+                                                        <Label Content="{Binding Szt_r3_pow_10}" Style="{StaticResource AlgCentLabel_marg}"/>
+                                                    </StackPanel>
+                                                </Border>
+                                                <Border Style="{StaticResource STBorder}" >
+                                                    <StackPanel Orientation="Vertical">
+                                                        <ProgressBar Value="{Binding Szt_r3_polPal}" Maximum="100" Style="{StaticResource ProgStyle}" />
+                                                        <Label Content="{Binding Szt_r3_polPal}" Style="{StaticResource AlgCentLabel_marg}" />
+                                                    </StackPanel>
+                                                </Border>
+                                                <Border Style="{StaticResource STBorder}" >
+                                                    <StackPanel Orientation="Vertical">
+                                                        <ProgressBar Value="{Binding Szt_r3_Pal}" Maximum="100" Style="{StaticResource ProgStyle}" />
+                                                        <Label Content="{Binding Szt_r3_Pal}" Style="{StaticResource AlgCentLabel_marg}" />
+                                                    </StackPanel>
+                                                </Border>
+
+                                            </StackPanel>
+
+                                            <StackPanel Orientation="Vertical" Width="{Binding ElementName=c7,Path=ActualWidth }" >
+
+                                                <Border Style="{StaticResource STBorder}" >
+                                                    <StackPanel Orientation="Vertical">
+                                                        <ProgressBar Value="{Binding Szt_r4_pon_10}" Maximum="100" Style="{StaticResource ProgStyle}" />
+                                                        <Label Content="{Binding Szt_r4_pon_10}" Style="{StaticResource AlgCentLabel_marg}"/>
+                                                    </StackPanel>
+                                                </Border>
+                                                <Border Style="{StaticResource STBorder}" >
+                                                    <StackPanel Orientation="Vertical">
+                                                        <ProgressBar Value="{Binding Szt_r4_pow_10}" Maximum="100" Style="{StaticResource ProgStyle}" />
+                                                        <Label Content="{Binding Szt_r4_pow_10}" Style="{StaticResource AlgCentLabel_marg}"/>
+                                                    </StackPanel>
+                                                </Border>
+                                                <Border Style="{StaticResource STBorder}" >
+                                                    <StackPanel Orientation="Vertical">
+                                                        <ProgressBar Value="{Binding Szt_r4_polPal}" Maximum="100" Style="{StaticResource ProgStyle}" />
+                                                        <Label Content="{Binding Szt_r4_polPal}" Style="{StaticResource AlgCentLabel_marg}" />
+                                                    </StackPanel>
+                                                </Border>
+                                                <Border Style="{StaticResource STBorder}" >
+                                                    <StackPanel Orientation="Vertical">
+                                                        <ProgressBar Value="{Binding Szt_r4_Pal}" Maximum="100" Style="{StaticResource ProgStyle}" />
+                                                        <Label Content="{Binding Szt_r4_Pal}"  Style="{StaticResource AlgCentLabel_marg}"/>
+                                                    </StackPanel>
+                                                </Border>
+
+                                            </StackPanel>
+
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGrid.RowDetailsTemplate>
+                            </DataGrid>
+
+                        </DockPanel>
+
+                    </StackPanel>
+                </DockPanel>
+            </StackPanel>
+
+            <Label x:Name="xKryj" Content="rozwiń" MouseDown="Label_MouseDown_2" FontSize="18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#FFCAC9C9" HorizontalContentAlignment="Center"  />
+        </StackPanel>
+
+        <ScrollViewer x:Name="MyScrollViewer"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"  Grid.Row="1" Height="auto" Margin="0,20,0,0" PanningMode="VerticalOnly">
+            <!-- <ScrollViewer  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Name="sv1" PanningMode="VerticalOnly"  > -->
+            <StackPanel Orientation="Vertical" Height="auto" x:Name="FlowLayoutPanel1" x:FieldModifier="public"   Margin="10,20,20,0"  
+                        Button.DragEnter="Button_DragEnter" Button.MouseLeftButtonDown="Button_MouseDown" SizeChanged="FlowLayoutPanel1_SizeChanged" >
+            </StackPanel>
+        </ScrollViewer>
+        <TextBox Visibility="Collapsed" x:Name="Lloc" Text="80" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,30,100,0"/>
+    </Grid>
+</Page>
+

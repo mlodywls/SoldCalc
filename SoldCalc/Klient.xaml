@@ -1,0 +1,99 @@
+﻿
+<Page x:Class="SoldCalc.Klient"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:local="clr-namespace:SoldCalc"
+        mc:Ignorable="d" 
+        d:DesignHeight="400" d:DesignWidth="1050"         
+        Title="Klient" 
+        SizeChanged="Page_SizeChanged" 
+        Loaded="Page_Loaded" 
+        Margin="0,-55,0,0">
+
+<Page.Resources>
+    <ResourceDictionary>
+        <ScaleTransform x:Key="ScaleTransformDockPanel" ScaleX="0.9" ScaleY="0.9" />
+        <ScaleTransform x:Key="ScaleTransform_window" ScaleX="0.98" ScaleY="0.98" />
+    </ResourceDictionary>
+
+</Page.Resources>
+
+    <Grid x:Name="Grid1" Style="{StaticResource BacgrundGrid}" >
+   
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" MaxHeight="50" MinHeight="30" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+
+
+
+
+
+    <DockPanel x:Name="Panel1"  Height="55" Background="#FFE8E8E8" Margin="0,0,0,0" LayoutTransform="{StaticResource ScaleTransformDockPanel}" Style="{StaticResource BacgrundDockPanel}" >
+
+        <StackPanel Orientation="Horizontal" Margin="0,-5,0,0" Style="{StaticResource BacgrundStack}" >
+            <!--LayoutTransform="{StaticResource windowScalePanel}"> -->
+            <StackPanel Orientation="Horizontal" Margin="30,0,0,0">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White" >
+                    <Label Grid.Column="1" Opacity="0.5" x:Name="SzukajTxt" Margin="10,2,0,0" Height="{Binding ElementName=TxtAdd, Path=Height}"   Background="{x:Null}" Padding="5,5,5,5"  HorizontalAlignment="Center" Width="390" Content="Szukaj Klienta" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center"  />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="-400,0,0,0" MouseDown="StackPanel_MouseDown" >
+                    <TextBox  Grid.Column="1" Style= "{StaticResource TexBboxStyle}"   x:Name="TxtAdd" Height="35"  Margin="0,2,0,0" TextChanged="TextBox_TextChanged"  Background="{x:Null}" Padding="30,0,0,0"  />
+                    <Label x:Name="czyscTxt" MouseDown="StackPanel_MouseDown" Visibility="Collapsed" Content="x" Width="40" Height="40" Background="{x:Null}" FontFamily="Bahnschrift Light" FontSize="25" HorizontalAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="-3,-5,5,5" Margin="-40,0,0,0" />
+
+                </StackPanel>
+            </StackPanel>
+
+            <ComboBox Grid.Column="1" Style= "{StaticResource ComboBoxStyle}" Height="{Binding ElementName=TxtAdd, Path=Height}"   DisplayMemberPath="Branza" SelectedValuePath="KO"  IsEditable="True" TextBoxBase.TextChanged="CombBR_Selectiontext"  x:Name="CombBR"  Margin="10,2,0,0" />
+            <Label x:Name="LabKO" Style="{StaticResource labelStyle}" Content=""  Width="130"  Height="{Binding ElementName=TxtAdd, Path=Height}"  Margin="10,2,0,0" />
+            <Label x:Name="IleWrs" Style="{StaticResource labelStyle}" Margin="100,2,0,0" Width="90"  Height="{Binding ElementName=TxtAdd, Path=Height}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <ComboBox Grid.Column="1"  Style= "{StaticResource ComboBoxStyle}" Width="200" Height="{Binding ElementName=TxtAdd, Path=Height}"  DisplayMemberPath="KO" SelectedValuePath="KO" IsEditable="True" TextBoxBase.TextChanged="CombKO_Selectiontext"  x:Name="CombKO"  Margin="10,2,0,0"  />
+            <ComboBox Grid.Column="1" Style= "{StaticResource ComboBoxStyle}"  Width="200" Height="{Binding ElementName=TxtAdd, Path=Height}"  DisplayMemberPath="Opiekun_klienta" SelectedValuePath="Opiekun_klienta" IsEditable="True" TextBoxBase.TextChanged="CombKO_Selectiontext"  x:Name="CombPH"  Margin="10,2,0,0"  />
+
+        </StackPanel>
+    </DockPanel>
+
+    <DockPanel x:Name="DokListKl" Grid.Row="2" LayoutTransform="{StaticResource ScaleTransform_window}">
+
+        <ListView  x:Name="TTTDataGridView1"  Margin="0,0,10,10"   SizeChanged="TTTDataGridView1_SizeChanged" MouseDoubleClick="TTTDataGridView1_MouseDoubleClick"
+                        DataContext="{Binding  Source=ListKlient, NotifyOnTargetUpdated=True}"
+                        
+                        ItemsSource="{Binding Source= ListKlient, NotifyOnTargetUpdated=True}"
+                        Style="{StaticResource StyleListViev }" ItemContainerStyle="{StaticResource StylLV }"    >
+                <!--DataContext="{Binding  Source=ListKlient, NotifyOnTargetUpdated=True}"-->
+                <!--ItemsSource="{Binding Source= ListKlient, NotifyOnTargetUpdated=True}"-->
+                <ListView.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Width" Value ="Auto" />
+                    <Setter Property="MaxWidth" Value="Infinity"/>
+                    <Setter Property="Height" Value="Auto" />
+                    <Setter Property="FontSize" Value="16"/>
+                    <Setter Property="FontWeight" Value="Normal"/>
+                    <Setter Property="Background" Value="{x:Null}"/>
+                    <Setter Property="TextWrapping" Value="Wrap"/>
+                </Style>
+            </ListView.Resources>
+            <ListView.View >
+                <GridView ColumnHeaderContainerStyle ="{StaticResource StyleListVievColumnStyle }" >
+
+                    <GridViewColumn Header="Sap" DisplayMemberBinding="{Binding Numer_konta, Mode=TwoWay ,  UpdateSourceTrigger=PropertyChanged}" Width="80"  />
+                    <GridViewColumn Header="Nazwa klienta" DisplayMemberBinding="{Binding Nazwa_klienta, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}" Width="Auto"   />
+                    <GridViewColumn Header="Adres" DisplayMemberBinding="{Binding Adres, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}" Width="auto"/>
+                    <GridViewColumn Header="Kod Pocztowy" DisplayMemberBinding="{Binding Kod_Poczta, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}" Width="110" />
+                    <GridViewColumn Header="Poczta" DisplayMemberBinding="{Binding Poczta, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}" Width="auto" />
+                    <!-- <GridViewColumn Header="Forma pł." DisplayMemberBinding="{Binding Forma_plac}" Width="100"/> -->
+                    <GridViewColumn Header="PraceList" DisplayMemberBinding="{Binding PraceList, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}" Width="120" />
+                    <GridViewColumn Header="Branża" DisplayMemberBinding="{Binding Branza, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}" Width="Auto"  />
+                    <GridViewColumn Header="NIP" DisplayMemberBinding="{Binding NIP, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}" Width="100"  />
+                    <GridViewColumn Header="Stan" DisplayMemberBinding="{Binding Stan, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}" Width="100"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </DockPanel>
+
+</Grid>
+</Page>
+

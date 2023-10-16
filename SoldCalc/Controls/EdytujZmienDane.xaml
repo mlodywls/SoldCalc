@@ -1,0 +1,92 @@
+﻿
+<UserControl x:Class="SoldCalc.Controls.EdytujZmienDane"
+               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+               xmlns:local="clr-namespace:SoldCalc"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" Width="825" Loaded="UserControl_Loaded">
+    <!--d:DataContext="{d:DesignInstance Type=local:DaneKlient}"-->
+    <Grid>
+        <Image Source="/images/Clear.png" x:Name="UClear" MouseDown="UClear_Click"  Width="15" Height="15" Margin="0,5,5,0" HorizontalAlignment="Right" VerticalAlignment="Top"  />
+
+        <StackPanel>
+            <StackPanel  x:Name="Panel1" Orientation="Vertical" Height="auto" Margin="0,10,0,0" >
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                    <Label Style="{StaticResource labelStyle}"  Content="NIP"  Width="100" Height="25" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <TextBox  Text="{Binding NIP, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"  x:Name="T1" MaxLength="10" PreviewTextInput="NumberValidationTextBox" x:FieldModifier="public" Width="229"  Height="25" HorizontalAlignment="Left" FontSize="16" FontWeight="Bold" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top"  Background="White"  BorderBrush="{x:Null}" TextChanged="T1_TextChanged"/>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                        <Label Style="{StaticResource labelStyle}"  Content="SAP"  Width="100" Height="25"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                        <TextBox x:Name="T3" Text="{Binding Numer_konta, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" MaxLength="7" PreviewTextInput="NumberValidationTextBox"  Width="227" Height="25" HorizontalAlignment="Left" FontSize="16"  FontWeight="Bold" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  Background="White" BorderBrush="{x:Null}" TextChanged="T3_TextChanged" />
+                    </StackPanel>
+                    <Label x:Name="Xid" Content="0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                    <Label Style="{StaticResource labelStyle}"  Content="Nazwa Klienta:"  Width="100" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center"  />
+                    <TextBox    x:Name="T4" Text="{Binding Nazwa_klienta, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="694" Height="Auto" HorizontalAlignment="Center" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"   Background="White" BorderBrush="{x:Null}" TextWrapping="WrapWithOverflow"  />
+                </StackPanel>
+
+                <!--  <StackPanel Orientation="Horizontal">
+                    <Label Style="{StaticResource labelStyle}"  Content="Nazwa CD"  Width="100" Height="25" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <TextBox Text="{Binding NIP}"  x:Name="T5" Width="696"  Height="25" HorizontalAlignment="Center" FontSize="16" FontWeight="Bold" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center"  Background="White"  BorderBrush="{x:Null}"/>
+                </StackPanel> -->
+
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                    <Label Style="{StaticResource labelStyle}"  Content="Adres"  Width="100" Height="25" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <TextBox   x:Name="T6" Text="{Binding Adres, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="695"  Height="25" HorizontalAlignment="Center" FontSize="16" FontWeight="Bold" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center"  Background="White"  BorderBrush="{x:Null}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                    <Label Style="{StaticResource labelStyle}"  Content="Kod pocztowy"  Width="100" Height="25" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <TextBox   x:Name="T7" Text="{Binding Kod_Poczta, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"  PreviewTextInput="NumberValidationTextBox" MaxLength="6" Width="100"  Height="25" HorizontalAlignment="Left" FontSize="16" FontWeight="Bold" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top"  Background="White"  BorderBrush="{x:Null}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Style="{StaticResource labelStyle}"  Content="Poczta"  Width="100" Height="25" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                        <TextBox   x:Name="T8"  Text="{Binding Poczta, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="495"  Height="25" HorizontalAlignment="Left" FontSize="16" FontWeight="Bold" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top"  Background="White"  BorderBrush="{x:Null}"/>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                    <Label Style="{StaticResource labelStyle}"  Content="Email"  Width="100" Height="25" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <TextBox   x:Name="T13" Text="{Binding E_mail, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="695"  Height="26" HorizontalAlignment="Center" FontSize="16" FontWeight="Bold" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center"  Background="White"  BorderBrush="{x:Null}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                    <Label Style="{StaticResource labelStyle}"  Content="Tel."  Width="100" Height="25" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <TextBox   x:Name="T12" Text="{Binding Tel, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="696"  Height="26" HorizontalAlignment="Left" FontSize="16" FontWeight="Bold" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center"  Background="White"  BorderBrush="{x:Null}"/>
+                </StackPanel>
+
+
+
+
+
+
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                    <Label Style="{StaticResource labelStyle}" Content="PraceList"  Width="100" Height="25"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    <ComboBox   IsEditable="True"  x:Name="T10" Text="{Binding PraceList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="349" Height="25" HorizontalAlignment="Left" FontSize="16" FontWeight="Bold" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  BorderBrush="{x:Null}"  Background="White"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                    <Label Style="{StaticResource labelStyle}" Content="Branża"  Width="100" Height="25"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    <ComboBox   IsEditable="true"  IsReadOnly="true" 
+                    x:Name="T11"   Text="{Binding Branza, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"  Width="693" Height="Auto" HorizontalAlignment="Left" FontSize="16" FontWeight="Bold" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" BorderBrush="{x:Null}"  Background="White" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                    <Label Style="{StaticResource labelStyle}" Content="Forma płatnosci"  Width="100" Height="25"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    <ComboBox   IsEditable="true"  IsReadOnly="true" x:Name="T9"  Text="{Binding Forma_plac, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="693" Height="Auto" HorizontalAlignment="Left" FontSize="16" FontWeight="Bold" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" BorderBrush="{x:Null}"  Background="White" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Style="{StaticResource labelStyle}" Content="Aktywność"  Width="100" Height="25"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    <ComboBox   IsEditable="true"  IsReadOnly="true"  x:Name="T2" Text="{Binding Stan, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"  Width="245" Height="25" TextBoxBase.TextChanged="T2_SelectionChanged" HorizontalAlignment="Left" FontSize="16" FontWeight="Bold" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  BorderBrush="{x:Null}"  Background="White"/>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Orientation="Vertical" Height="Auto" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,30" >
+                <Label x:Name="tButton3" Content="ZAPISZ"   MouseDown="ZatwierdzZapis_MouseDown"  Style="{StaticResource label_Scale_Style}"  Width="300" Height="30" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="#FFF97C7C" Margin="0,0,0,20"/>
+                <Label x:Name="ClearCtr" Content="Czyść"    MouseDown="Clear_textBox"               Width="300" Height="30" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="White"/>
+            </StackPanel>
+            <Button x:Name="Remowe"     Content="USUŃ"      Click="Remowe_Click"                Width="100" Height="30" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,-30,40,0" Opacity="0.5" Background="#FFF30808"/>
+            <!--Style="{StaticResource CtrAdmin}"-->
+        </StackPanel>
+
+    </Grid>
+</UserControl>
